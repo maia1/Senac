@@ -87,10 +87,10 @@ public class CRUDSaida {
             produtos.clear();    
         try{ 
             sql = "SELECT * FROM tb_produtos WHERE pro_est_cod = ?";
-            //sql = "SELECT * FROM tb_pedido WHERE pro_arm_cod = ?";
+            
             st = connection.prepareStatement(sql);
             st.setInt(1, 2);
-            //st.setDate(2, dataValSQL);
+            
             result = st.executeQuery();
             while(result.next()){
                 produtos.add(result.getString(2));          
