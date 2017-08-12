@@ -32,7 +32,7 @@ import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 public class GuiSaida extends JPanel{
     private JLabel lbProduto, lbQtd, lbDtSaida;
-    private JTextField tfProd, tfQtd, tfDtSaida;
+    private JTextField tfProd, tfQtd, tfDtSaida, tfCodPro, tfCodEst;
     private JButton btAdicionar, btRemover, btRegistrar, btExcluir, btLimpar;
     private JComboBox cbProdutos;
     
@@ -61,7 +61,7 @@ public class GuiSaida extends JPanel{
     
     public void inicializarComponentes(){
         setLayout(null);
-        String[] produtos = buscarProdutos();
+        String[] produtos = listarProdutos();
         
         lbProduto = new JLabel("Produtos");
         lbQtd = new JLabel("Qtd");
@@ -72,6 +72,7 @@ public class GuiSaida extends JPanel{
         tfProd = new JTextField();
         tfQtd = new JTextField();
         tfDtSaida = new JTextField();
+        tfCodPro = new JTextField();
           
         
         btAdicionar = new JButton("Adicionar");
@@ -80,11 +81,12 @@ public class GuiSaida extends JPanel{
         btExcluir = new JButton("Excluir");
         btLimpar = new JButton("Limpar");
                              //X   Y COMP  ALT
-        //lbProduto.setBounds(20, 30, 60, 25);
-        cbProdutos.setBounds(20, 30, 320, 25);
+        lbProduto.setBounds(105, 10, 60, 25);
+        cbProdutos.setBounds(55, 30, 270, 25);
         tfProd.setBounds(90, 30, 200, 25);
-        lbQtd.setBounds(350, 30, 30, 25);
-        tfQtd.setBounds(400, 30, 45, 25);
+        tfCodPro.setBounds(10,30,35,25);
+        lbQtd.setBounds(350, 10, 30, 25);
+        tfQtd.setBounds(345, 30, 45, 25);
         
         btAdicionar.setBounds(100,80,100,25);
         btRemover.setBounds(210,80,90,25);
@@ -97,9 +99,9 @@ public class GuiSaida extends JPanel{
         pnPrincipal.setLayout(null);
         pnPrincipal.setBounds(0, 0, 500, 400);
         
-        //pnPrincipal.add(lbProduto);
+        pnPrincipal.add(lbProduto);
         pnPrincipal.add(cbProdutos);
-        //pnPrincipal.add(tfProd);
+        pnPrincipal.add(tfCodPro);
         pnPrincipal.add(lbQtd);
         pnPrincipal.add(tfQtd);
         pnPrincipal.add(lbDtSaida);
@@ -114,7 +116,7 @@ public class GuiSaida extends JPanel{
         pnTabela.setBorder(new TitledBorder("Itens de Saída"));
         spTabela = new JScrollPane();
         DefaultTableModel tableModel = new DefaultTableModel(
-            new String[]{"PRODUTOS","QTD","DT.SAÍDA"},0){
+            new String[]{"CÓD.PROD","PRODUTOS","QTD","DT.SAÍDA"},0){
                 public boolean iscellEditable(int row, int col){
                     if(col <3){
                         return false;
@@ -128,13 +130,16 @@ public class GuiSaida extends JPanel{
         DefaultTableCellHeaderRenderer alinharDireita = new DefaultTableCellHeaderRenderer();
         alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(270);
+        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(40);
         tbTabela.getColumnModel().getColumn(0).setResizable(false);
         tbTabela.getColumnModel().getColumn(1).setResizable(false);
-        tbTabela.getColumnModel().getColumn(1).setPreferredWidth(45);
+        tbTabela.getColumnModel().getColumn(1).setPreferredWidth(230);
         tbTabela.getColumnModel().getColumn(2).setResizable(false);
-        tbTabela.getColumnModel().getColumn(2).setPreferredWidth(70);
+        tbTabela.getColumnModel().getColumn(2).setPreferredWidth(45);
         tbTabela.getColumnModel().getColumn(2).setCellRenderer(alinharDireita);
+        tbTabela.getColumnModel().getColumn(3).setResizable(false);
+        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(70);
+        tbTabela.getColumnModel().getColumn(3).setCellRenderer(alinharDireita);
 
 
         tbTabela.getTableHeader().setReorderingAllowed(false);
@@ -161,6 +166,7 @@ public class GuiSaida extends JPanel{
                 }
                 DefaultTableModel dtm = (DefaultTableModel)tbTabela.getModel();
                 dtm.addRow(new Object[]{
+                    tfCodPro.getSelectedText(),
                     cbProdutos.getSelectedItem(),
                     tfQtd.getText(),
                     sdf.format(getDataAtual()),
@@ -196,6 +202,7 @@ public class GuiSaida extends JPanel{
             public void actionPerformed(ActionEvent ae) {
                 
                 ArrayList<Saidas> saidas = new ArrayList<Saidas>();
+                
                 for (int linha = 0; linha <tbTabela.getRowCount(); linha++){
                     Saidas saida = new Saidas();
                     for(int coluna = 1; coluna< tbTabela.getColumnCount(); coluna++){  
@@ -223,7 +230,7 @@ public class GuiSaida extends JPanel{
                     saidas.add(saida);
                 } 
                 try {
-                    JOptionPane.showMessageDialog(null, saidas);
+                    //JOptionPane.showMessageDialog(null, saidas);
                     contSaida.cadastrar(saidas);
                 } catch (SQLException ex) {
                     Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
@@ -249,49 +256,10 @@ public class GuiSaida extends JPanel{
         return c.getTime(); 
     }
     
-    private String[] buscarProdutos(){
+    private String[] listarProdutos(){
         String[] prod = contSaida.listarProdutos();
         return prod;
     }
-    
-
-
-//    private int buscarCodProduto() {
-//        try{
-//            int codProduto =0;
-//            sql = "SELECT prod_codigo FROM tb_produto WHERE prod_nome = ?;";
-//            st = connection.prepareStatement(sql);
-//            st.setString(1,buscarCodProduto());
-//            result = st.executeQuery();
-//            while(result.next()){
-//                codProduto = result.getInt(1);
-//            }
-//            return codProduto;
-//        }catch(SQLException e){
-//            resultado = "Erro!";
-//            return 0;
-//        }
-//    }
-
-private int buscarProduto(String nome){
-        try{
-            int codigo = 0;
-            sql ="SELECT prod_codigo FROM tb_produtos WHERE prod_nome = ?;";
-            st = connection.prepareStatement(sql);
-            st.setString(1, nome);
-            result = st.executeQuery();//Está atualizando a tabela do banco
-            while (result.next()){
-                codigo = result.getInt(1);//Esse 1 refere a coluna 1 do banco de dados
-            }
-            return codigo;
-        }catch(SQLException e){
-            resultado = "Erro!";
-            JOptionPane.showMessageDialog(null, "ERRO");
-            return 0;
-        }
-        
-    }  
-    
-
-    
+   
+     
 }

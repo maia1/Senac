@@ -1,13 +1,8 @@
-//create table tb_categorias(
-//	cat_cod int not null auto_increment primary key,
-//	cat_nome varchar(100)
-//);
-
 package model;
 
 public class Categorias {
     private int codigo;
-    private String nomeCategoria;
+    private String categoria;
 
     public int getCodigo() {
         return codigo;
@@ -17,20 +12,18 @@ public class Categorias {
         this.codigo = codigo;
     }
 
-    public String getNomeCategoria() {
-        return nomeCategoria;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setNomeCategoria(String nomeCategoria) {
-        this.nomeCategoria = nomeCategoria;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     @Override
     public String toString() {
-        return "Categorias{" + "codigo=" + codigo + ", nomeCategoria=" + nomeCategoria + '}';
+        return "Categoria{" + "codigo=" + codigo + ", categoria=" + categoria + '}';
     }
-
-    
     
     
     

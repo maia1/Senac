@@ -1,49 +1,49 @@
-//create table tb_entradas(
-//	ent_cod int not null auto_increment primary key,
-//	ent_dt date
-//);
-
 package model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import model.NotasFiscais;
+import model.Produtos;
 
 public class Entradas extends NotasFiscais {
-    private int codigo;
-    private Date dataEntrada;
+    private Date dataVal;
+    private int quantidade;
+    private Produtos produto;
     private SimpleDateFormat sdf;
 
     public Entradas() {
         sdf = new SimpleDateFormat("dd/MM/yyyy");
     }
-
-    public int getCodigo() {
-        return codigo;
+    
+    
+    
+    public Date getDataVal() {
+        return dataVal;
     }
 
-    public void setCodigo(int codigo) {
-        this.codigo = codigo;
+    public void setDataVal(Date dataEntrada) {
+        this.dataVal = dataEntrada;
     }
 
-    public Date getDataEntrada() {
-        return dataEntrada;
+    public int getQuantidade() {
+        return quantidade;
     }
 
-    public void setDataEntrada(Date dataEntrada) {
-        this.dataEntrada = dataEntrada;
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 
-    public SimpleDateFormat getSdf() {
-        return sdf;
+    public Produtos getProduto() {
+        return produto;
     }
 
-    public void setSdf(SimpleDateFormat sdf) {
-        this.sdf = sdf;
+    public void setProduto(Produtos produto) {
+        this.produto = produto;
     }
-
+    
     @Override
     public String toString() {
-        return "Entradas{" + "codigo=" + codigo + ", dataEntrada=" + sdf.format(dataEntrada) +'}';
+        return "Entradas{" + "dataEntrada=" +sdf.format(dataVal)+ ", quantidade=" + quantidade + ", produto=" + produto;
     }
     
     

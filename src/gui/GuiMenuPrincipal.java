@@ -17,7 +17,7 @@ import model.Saidas;
 public class GuiMenuPrincipal extends JFrame{
     private JMenuBar mnBarra;
     private JMenu mnArquivo, mnEstoque;
-    private JMenuItem mtSair, mtProduto, mtEntrada, mtSaida;
+    private JMenuItem mtSair, mtPedido, mtEntrada, mtSaida;
     private Container container;
 
     public GuiMenuPrincipal() {
@@ -34,7 +34,7 @@ public class GuiMenuPrincipal extends JFrame{
         mnBarra = new JMenuBar();
         mnArquivo = new JMenu("Arquivo");
         mnEstoque = new JMenu("Estoque");
-        mtProduto = new JMenuItem("Produto");
+        mtPedido = new JMenuItem("Pedido");
         mtSair = new JMenuItem("Sair");
         mtEntrada = new JMenuItem("Entrada");
         mtSaida = new JMenuItem("Saída");
@@ -42,7 +42,7 @@ public class GuiMenuPrincipal extends JFrame{
         mnBarra.add(mnArquivo);
         mnBarra.add(mnEstoque);
         mnArquivo.add(mtSair);
-        mnEstoque.add(mtProduto);
+        mnEstoque.add(mtPedido);
         mnEstoque.add(mtEntrada);
         mnEstoque.add(mtSaida);
         setJMenuBar(mnBarra);
@@ -58,13 +58,13 @@ public class GuiMenuPrincipal extends JFrame{
             }
         });
         
-        mtProduto.addActionListener(new ActionListener() {
+        mtPedido.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                GuiProduto produto = new GuiProduto();
+                GuiPedido pedido = new GuiPedido();
                 container.removeAll();
-                container.add(produto);
+                container.add(pedido);
                 container.validate();
             }
         });
