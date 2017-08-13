@@ -1,6 +1,7 @@
 package jdbc;
 
 
+
 import excecoes.ProdutoNaoEncontrado;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import model.Estoques;
 import model.Produtos;
 import model.Saidas;
 
@@ -35,60 +37,107 @@ public class CRUDSaida {
     
     public void cadastrar(ArrayList<Saidas> saidas){
         for (Saidas saida : saidas){
-        
-        java.util.Date data1 = saida.getDataSaida();
-        java.sql.Date dataSaidaSQL = new java.sql.Date(data1.getTime());
-        
-        try{
-        sql = "insert into tb_saidas(sai_dt) VALUES (?);";
-        st = connection.prepareStatement(sql);
-        st.setDate(1, dataSaidaSQL);
-        st.executeUpdate();
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
+            int codProd = codPRo(saida.getNomePro());
 
-        }  
-        //Produtos prod = saida.getProdutos();
+            java.util.Date data2 = saida.getDataVal();
+            java.sql.Date dataValSQL = new java.sql.Date(data2.getTime());
+
+           
+            int codEst = 0;
+            int qtdEst = 0;
             
-        //int codPro = buscarCodPRo(prod.getNome());
-       
-        int codSaid = codSai();
-        int codProd = codPRo();
-        try{
             
-        sql2 = "insert into tb_it_sai(it_sai_qtd, it_sai_pro_cod, it_sai_sai_cod) VALUES (?,?,?);";
-        st = connection.prepareStatement(sql2);
-        st.setInt(1,saida.getQuantidadeSai());
-        st.setInt(2, codProd);
-        st.setInt(3, codSaid);
-        st.executeUpdate();
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null, "Erro nos Itens Saída!");
-        }
+
+
+            try{
+    //        ArrayList<Estoques> estoques;
+    //        estoques = new ArrayList<Estoques>();
+    //        int fluxoEst = 
+            sql3 = "select 	tb_produtos.pro_cod,\n" +
+                        "	tb_estoques.est_cod,\n" +
+                        "    	tb_estoques.est_qtd\n" +
+                        "	from \n" +
+                        "	   	tb_produtos\n" +
+                        "	inner join\n" +
+                        "	   	tb_estoques\n" +
+                        "	on\n" +
+                        "	   	tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
+                        "	where\n" +
+                        "	 	tb_produtos.pro_cod = ? and tb_estoques.est_dt_val = ? and \n" +
+                        "tb_estoques.est_arm = 'Nutrição';";
+
+            st = connection.prepareStatement(sql3);
+            st.setInt(1, codProd);
+            st.setDate(2, dataValSQL);
+            result = st.executeQuery();
+            while(result.next()){
+                codEst = result.getInt(2);
+                qtdEst = result.getInt(3);
+            }
+            }catch(SQLException e){
+                JOptionPane.showMessageDialog(null, "Erro no Armazem Saída!");
+            }
+            //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
+            int resultado1 = qtdEst - saida.getQuantidadeSai();
+               if(saida.getQuantidadeSai() > qtdEst){
+                    JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
+               }else{
+                moviEsto(codEst, resultado1);
+                java.util.Date data1 = saida.getDataSaida();
+                java.sql.Date dataSaidaSQL = new java.sql.Date(data1.getTime());
+
+                try{
+                sql = "insert into tb_saidas(sai_dt) VALUES (?);";
+                st = connection.prepareStatement(sql);
+                st.setDate(1, dataSaidaSQL);
+                st.executeUpdate();
+                }catch(SQLException e){
+                    JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
+
+                }  
+                //Produtos prod = saida.getProdutos();
+
+                //int codPro = buscarCodPRo(prod.getNome());
+
+                int codSaid = codSai();
+
+
+                try{
+
+                sql2 = "insert into tb_it_sai(it_sai_qtd, it_sai_pro_cod, it_sai_sai_cod) VALUES (?,?,?);";
+                st = connection.prepareStatement(sql2);
+                st.setInt(1,saida.getQuantidadeSai());
+                st.setInt(2, codProd );//Devo buscar o codigo do produto!!!
+                st.setInt(3, codSaid);
+                st.executeUpdate();
+                }catch(SQLException e){
+                    JOptionPane.showMessageDialog(null, "Erro nos Itens Saída!");
+                }
         //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
-        
+                if(resultado1 == 0){
+                    try{
+                        sql4 = "DELETE FROM tb_estoques WHERE tb_estoques.est_cod = ?";
+                        st = connection.prepareStatement(sql4);
+                        st.setInt(1, codEst);
+                        st.executeUpdate();
+                    }catch(SQLException e){
+                        JOptionPane.showMessageDialog(null, "Erro nos Itens Saída!");
+                    }
+                }
+               
+        }
+        }        
     }
-    
-        try{
-            
-        sql3 = "insert into tb_estoques(est_arm) Values (?);";
-        st = connection.prepareStatement(sql3);
-        st.setString(1, "Nutrição");
-        st.executeUpdate();
-        }catch(SQLException e){
-            JOptionPane.showMessageDialog(null, "Erro no Armazem Saída!");
-        }
-        //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
-        }
     
     public ArrayList<String> listarProdutos(){
             
             produtos.clear();    
+            String produto = "";
         try{ 
             sql = "SELECT * FROM tb_produtos\n" +
-                    "INNER JOIN tb_estoques\n" +
-                    "ON tb_produtos.pro_est_cod = tb_estoques.est_cod\n" +
-                    "WHERE tb_estoques.est_arm = 'Nutrição';";
+"                    INNER JOIN tb_estoques\n" +
+"                    ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
+"                    WHERE tb_estoques.est_arm = 'Nutrição';";
             
             st = connection.prepareStatement(sql);
             //st.setInt(1, 2);
@@ -127,7 +176,7 @@ public class CRUDSaida {
         try{
             sql = "Select pro_cod From tb_produtos where pro_nome = ?";
             st = connection.prepareStatement(sql);
-            st.setString(1, produtos.get(cod));
+            st.setString(1, nome);
             result = st.executeQuery();
             while (result.next()){
                 cod = result.getInt(1);
@@ -140,29 +189,17 @@ public class CRUDSaida {
         
     }
     
-    private int buscarProEstoque(String nome){
+    private void moviEsto(int codEst, int resultadoEst){
+        
         try{
-            int codigo = 0;
-           
-            sql ="SELECT tb_produtos.pro_cod, tb_produtos.pro_nome,tb_estoques.est_qtd,tb_it_sai.it_sai_qtd \n" +
-"from tb_produtos\n" +
-"INNER JOIN tb_estoques\n" +
-"on tb_produtos.pro_est_cod = tb_estoques.est_cod\n" +
-"INNER JOIN tb_it_sai\n" +
-"on tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod;";
+            sql ="UPDATE tb_estoques SET est_qtd = ? WHERE tb_estoques.est_cod = ?;";
             st = connection.prepareStatement(sql);
-            st.setString(1, nome);
-            result = st.executeQuery();//Está atualizando a tabela do banco
-            while (result.next()){
-                codigo = result.getInt(1);//Esse 1 refere a coluna 1 do banco de dados
-                
-            }
-            return codigo;
-       
+            st.setInt(1, resultadoEst);
+            st.setInt(2, codEst);
+            st.executeUpdate();
         }catch(SQLException e){
             resultado = "Erro!";
             JOptionPane.showMessageDialog(null, "ERRO");
-            return 0;
         }
     }
     

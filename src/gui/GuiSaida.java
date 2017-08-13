@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,8 +32,8 @@ import model.Saidas;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 public class GuiSaida extends JPanel{
-    private JLabel lbProduto, lbQtd, lbDtSaida;
-    private JTextField tfProd, tfQtd, tfDtSaida, tfCodPro, tfCodEst;
+    private JLabel lbProduto, lbQtd, lbDtSaida, lbDtVal;
+    private JTextField tfProd, tfQtd, tfDtSaida, tfCodEst, tfDtVal;
     private JButton btAdicionar, btRemover, btRegistrar, btExcluir, btLimpar;
     private JComboBox cbProdutos;
     
@@ -46,7 +47,7 @@ public class GuiSaida extends JPanel{
     private PreparedStatement st;
     private ResultSet result;
     private String sql, resultado;
-    private ArrayList<String> produtos;
+  
   
    
     
@@ -62,17 +63,20 @@ public class GuiSaida extends JPanel{
     public void inicializarComponentes(){
         setLayout(null);
         String[] produtos = listarProdutos();
+        //String[] estoques = buscarCodPro();
         
         lbProduto = new JLabel("Produtos");
         lbQtd = new JLabel("Qtd");
         lbDtSaida = new JLabel("Data Saída");
+        lbDtVal = new JLabel("Data de Val.");
+                
         
-        //cbProdutos = new JComboBox(buscarProdutos(produtos));
         cbProdutos = new JComboBox(produtos);
+        
         tfProd = new JTextField();
         tfQtd = new JTextField();
         tfDtSaida = new JTextField();
-        tfCodPro = new JTextField();
+        tfDtVal = new JTextField();
           
         
         btAdicionar = new JButton("Adicionar");
@@ -82,11 +86,15 @@ public class GuiSaida extends JPanel{
         btLimpar = new JButton("Limpar");
                              //X   Y COMP  ALT
         lbProduto.setBounds(105, 10, 60, 25);
-        cbProdutos.setBounds(55, 30, 270, 25);
+        cbProdutos.setBounds(25, 30, 270, 25);
         tfProd.setBounds(90, 30, 200, 25);
-        tfCodPro.setBounds(10,30,35,25);
-        lbQtd.setBounds(350, 10, 30, 25);
-        tfQtd.setBounds(345, 30, 45, 25);
+        
+        lbDtVal.setBounds(350, 10, 100, 25);
+        tfDtVal.setBounds(345, 30, 100, 25);
+        
+        
+        lbQtd.setBounds(460, 10, 30, 25);
+        tfQtd.setBounds(465, 30, 45, 25);
         
         btAdicionar.setBounds(100,80,100,25);
         btRemover.setBounds(210,80,90,25);
@@ -97,11 +105,11 @@ public class GuiSaida extends JPanel{
         
         pnPrincipal = new JPanel();
         pnPrincipal.setLayout(null);
-        pnPrincipal.setBounds(0, 0, 500, 400);
+        pnPrincipal.setBounds(0, 0, 600, 500);
         
         pnPrincipal.add(lbProduto);
         pnPrincipal.add(cbProdutos);
-        pnPrincipal.add(tfCodPro);
+        
         pnPrincipal.add(lbQtd);
         pnPrincipal.add(tfQtd);
         pnPrincipal.add(lbDtSaida);
@@ -111,12 +119,14 @@ public class GuiSaida extends JPanel{
         pnPrincipal.add(btRegistrar);
         //pnPrincipal.add(btExcluir);
         pnPrincipal.add(btLimpar);
+        pnPrincipal.add(lbDtVal);
+        pnPrincipal.add(tfDtVal);
         
         pnTabela = new JPanel(new BorderLayout());
         pnTabela.setBorder(new TitledBorder("Itens de Saída"));
         spTabela = new JScrollPane();
         DefaultTableModel tableModel = new DefaultTableModel(
-            new String[]{"CÓD.PROD","PRODUTOS","QTD","DT.SAÍDA"},0){
+            new String[]{"PRODUTOS","QTD","DT.SAÍDA", "DT.VAL"},0){
                 public boolean iscellEditable(int row, int col){
                     if(col <3){
                         return false;
@@ -130,16 +140,17 @@ public class GuiSaida extends JPanel{
         DefaultTableCellHeaderRenderer alinharDireita = new DefaultTableCellHeaderRenderer();
         alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(40);
+        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(70);
         tbTabela.getColumnModel().getColumn(0).setResizable(false);
         tbTabela.getColumnModel().getColumn(1).setResizable(false);
         tbTabela.getColumnModel().getColumn(1).setPreferredWidth(230);
         tbTabela.getColumnModel().getColumn(2).setResizable(false);
-        tbTabela.getColumnModel().getColumn(2).setPreferredWidth(45);
+        tbTabela.getColumnModel().getColumn(2).setPreferredWidth(65);
         tbTabela.getColumnModel().getColumn(2).setCellRenderer(alinharDireita);
         tbTabela.getColumnModel().getColumn(3).setResizable(false);
-        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(70);
+        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(65);
         tbTabela.getColumnModel().getColumn(3).setCellRenderer(alinharDireita);
+      
 
 
         tbTabela.getTableHeader().setReorderingAllowed(false);
@@ -160,16 +171,17 @@ public class GuiSaida extends JPanel{
             public void actionPerformed(ActionEvent ae) {
                 //cbProdutos = new JComboBox(buscarProdutos());
                 cbProdutos.requestFocus();
-                if(cbProdutos.getSelectedItem().equals("") || tfQtd.getText().equals("")){
+                if(cbProdutos.getSelectedItem().equals("") || tfQtd.getText().equals("") || tfDtVal.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Preencha todos os campos");
                     return;
                 }
                 DefaultTableModel dtm = (DefaultTableModel)tbTabela.getModel();
                 dtm.addRow(new Object[]{
-                    tfCodPro.getSelectedText(),
+                   
                     cbProdutos.getSelectedItem(),
                     tfQtd.getText(),
                     sdf.format(getDataAtual()),
+                    tfDtVal.getText()
 
                });
                limpar();
@@ -200,14 +212,17 @@ public class GuiSaida extends JPanel{
             @Override
             
             public void actionPerformed(ActionEvent ae) {
-                
                 ArrayList<Saidas> saidas = new ArrayList<Saidas>();
                 
                 for (int linha = 0; linha <tbTabela.getRowCount(); linha++){
                     Saidas saida = new Saidas();
-                    for(int coluna = 1; coluna< tbTabela.getColumnCount(); coluna++){  
+                    for(int coluna = 0; coluna< tbTabela.getColumnCount(); coluna++){  
                        
                         switch(coluna){
+                            case 0:
+                                String nome = ""+tbTabela.getValueAt(linha, coluna);
+                                saida.setNomePro(nome);
+                                break;
                             case 1: 
                                 
                                 int qtd = Integer.parseInt(""+tbTabela.getValueAt(linha, coluna));
@@ -218,10 +233,18 @@ public class GuiSaida extends JPanel{
                               
                                 saida.setDataSaida(getDataAtual());
                                 
+                            case 3:    
+                                String data = tfDtVal.getText();
+                                Date dataVal = null;
                                 
-                                break;
+                                try {
+                                    dataVal = sdf.parse(data);
+                                } catch (ParseException ex) {
+                                    Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                                 
-                                
+                                saida.setDataVal(dataVal);
+                                break;  
                             default:
                                 JOptionPane.showMessageDialog(null, "Não há produtos na lista.");
                         }

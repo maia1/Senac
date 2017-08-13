@@ -10,8 +10,9 @@ import java.util.Date;
 
 
 public class Saidas extends ItensSaidas{
-    private Date dataSaida;
+    private Date dataSaida, dataVal;
     private int codigo;
+    private String nomePro;
     private SimpleDateFormat sdf;
 
     public Saidas() {
@@ -42,6 +43,24 @@ public class Saidas extends ItensSaidas{
         this.sdf = sdf;
     }
 
+    public Date getDataVal() {
+        return dataVal;
+    }
+
+    public void setDataVal(Date dataVal) {
+        this.dataVal = dataVal;
+    }   
+
+    public String getNomePro() {
+        return nomePro;
+    }
+
+    public void setNomePro(String nomePro) {
+        this.nomePro = nomePro;
+    }
+    
+    
+    
     @Override
     public String toString() {
         

@@ -8,31 +8,31 @@ import model.Saidas;
 
 
 public class ControleSaida {
-    private CRUDSaida crudDSaida;
+    private CRUDSaida crudSaida;
 
     public ControleSaida() {
-        crudDSaida =  new CRUDSaida();
+        crudSaida =  new CRUDSaida();
  
     }
     
       public void cadastrar(ArrayList<Saidas> saidas) throws SQLException, ProdutoNaoEncontrado{
-        crudDSaida.cadastrar(saidas);
+        crudSaida.cadastrar(saidas);
     }
     
     public Saidas buscar(String nome ){
         Saidas sai = new Saidas();
         
-        sai = crudDSaida.buscar(nome);
+        sai = crudSaida.buscar(nome);
         return sai;
     }
    
     public void excluir(String nome){
-        crudDSaida.excluir(nome);
+        crudSaida.excluir(nome);
     }
     
     public String[] listarProdutos(){
 
-        ArrayList<String> produtos = crudDSaida.listarProdutos();
+        ArrayList<String> produtos = crudSaida.listarProdutos();
  
         String[] prod = new String[produtos.size()+1];
         int i=1;
@@ -42,6 +42,7 @@ public class ControleSaida {
         }
         return prod;
     }
+    
 
 
 }
