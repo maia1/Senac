@@ -3,7 +3,7 @@ package model;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Entradas extends NotaFiscal {
+public class Entradas extends NotasFiscais {
     private Date dataVal;
     private int quantidade;
     private Produtos produto;
