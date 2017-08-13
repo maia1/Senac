@@ -2,10 +2,8 @@ package model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import model.NotasFiscais;
-import model.Produtos;
 
-public class Entradas extends NotasFiscais {
+public class Entradas extends NotaFiscal {
     private Date dataVal;
     private int quantidade;
     private Produtos produto;

@@ -1,7 +1,5 @@
 package jdbc;
 
-
-
 import excecoes.ProdutoNaoEncontrado;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -50,9 +48,7 @@ public class CRUDSaida {
 
 
             try{
-    //        ArrayList<Estoques> estoques;
-    //        estoques = new ArrayList<Estoques>();
-    //        int fluxoEst = 
+  
             sql3 = "select 	tb_produtos.pro_cod,\n" +
                         "	tb_estoques.est_cod,\n" +
                         "    	tb_estoques.est_qtd\n" +
@@ -78,8 +74,9 @@ public class CRUDSaida {
                 JOptionPane.showMessageDialog(null, "Erro no Armazem Saída!");
             }
             //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
-            int resultado1 = qtdEst - saida.getQuantidadeSai();
+            int resultado1 = 0;
                if(saida.getQuantidadeSai() > qtdEst){
+                   resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
                     JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
                }else{
                 moviEsto(codEst, resultado1);
@@ -95,9 +92,6 @@ public class CRUDSaida {
                     JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
 
                 }  
-                //Produtos prod = saida.getProdutos();
-
-                //int codPro = buscarCodPRo(prod.getNome());
 
                 int codSaid = codSai();
 
@@ -249,39 +243,5 @@ public class CRUDSaida {
             return 0;
         }
     }
-    //    private int buscarCodProduto() {
-//        try{
-//            int codProduto =0;
-//            sql = "SELECT prod_codigo FROM tb_produto WHERE prod_nome = ?;";
-//            st = connection.prepareStatement(sql);
-//            st.setString(1,buscarCodProduto());
-//            result = st.executeQuery();
-//            while(result.next()){
-//                codProduto = result.getInt(1);
-//            }
-//            return codProduto;
-//        }catch(SQLException e){
-//            resultado = "Erro!";
-//            return 0;
-//        }
-//    }
-
-//    private int buscarProduto(String nome){
-//            try{
-//                int codigo = 0;
-//                sql ="select pro_cod from tb_produtos where pro_nome  = ?;";
-//                st = connection.prepareStatement(sql);
-//                st.setString(1, nome);
-//                result = st.executeQuery();//Está atualizando a tabela do banco
-//                while (result.next()){
-//                    codigo = result.getInt(1);//Esse 1 refere a coluna 1 do banco de dados
-//                }
-//                return codigo;
-//            }catch(SQLException e){
-//                resultado = "Erro!";
-//                JOptionPane.showMessageDialog(null, "ERRO");
-//                return 0;
-//            }
-//    }
        
 }

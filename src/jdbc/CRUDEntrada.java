@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
-import jdbc.Conectar;
 import model.Categorias;
 import model.Entradas;
 import model.Produtos;
@@ -19,7 +18,7 @@ public class CRUDEntrada {
     private ResultSet result;
     private String sql, resultado;
     private ArrayList<String> categorias;
-    private int contador;int cont = 1;
+    private int contador;
 
    
     public CRUDEntrada(){
@@ -31,15 +30,14 @@ public class CRUDEntrada {
     public void cadastrarProduto(Produtos produto, Date dtEnt, ArrayList<Entradas> entradas){
             Categorias cat = produto.getCategoria();
             
-            int cod = buscarCodPRo(produto.getNome());
+            int cod = buscarCodPro(produto.getNome());
             int codCat = buscarCodigoCat(cat.getCategoria());
             String descricao = produto.getDescricao();
             String nome = produto.getNome();    
     
             if(cod == 0){
-                
                 try{
-                    sql = "INSERT INTO tb_produtos(pro_nome, pro_cat_cod, pro_desc, pro_est_cod) VALUES (?,?,?,?)";
+                    sql = "INSERT INTO tb_produtos(pro_nome, pro_cat_cod, pro_desc) VALUES (?,?,?)";
                     
                     st = connection.prepareStatement(sql);
                     
@@ -48,9 +46,7 @@ public class CRUDEntrada {
                     st.setInt(2, codCat);
                    
                     st.setString(3, descricao);
-                                       
-                    st.setInt(4, cont++);
-                    
+             
                     st.executeUpdate();
                 
                 }catch(SQLException e){
@@ -89,6 +85,31 @@ public class CRUDEntrada {
         }
         cadastrarItensentrada(entradas);
     }
+    
+    public void cadastrarEstoque(ArrayList<Entradas> entradas){
+       Produtos produto = new Produtos();
+       
+        for(Entradas entrada : entradas){
+            produto = entrada.getProduto();
+            int qtdEnt = entrada.getQuantidade();
+            int codPro = buscarCodPro(produto.getNome());
+            
+            java.util.Date data = entrada.getDataVal();
+            java.sql.Date dataSqlVal = new java.sql.Date(data.getTime());
+            
+            try{
+                sql = "Insert Into tb_estoques(est_qtd, est_dt_val, est_arm, est_pro_cod) values(?,?,?,?)";
+                st = connection.prepareStatement(sql);
+                st.setInt(1, qtdEnt);
+                st.setDate(2, dataSqlVal);
+                st.setString(3, "Geral");
+                st.setInt(4,codPro);
+                st.executeUpdate();
+            }catch(SQLException se){
+                resultado = "Erro!";
+            }
+        }
+    }
         
     public void cadastrarItensentrada(ArrayList<Entradas> entradas){
         for (Entradas entrada : entradas){
@@ -98,7 +119,7 @@ public class CRUDEntrada {
             
             Produtos prod = entrada.getProduto();
             
-            int codPro = buscarCodPRo(prod.getNome());
+            int codPro = buscarCodPro(prod.getNome());
             int codEntr = codEnt();
             int quantidade = entrada.getQuantidade();
 
@@ -114,11 +135,13 @@ public class CRUDEntrada {
                     resultado = "Erro";
                 }
         } 
+        cadastrarEstoque(entradas);
         int codEntH = codEnt();
-        JOptionPane.showMessageDialog(null,"Esse é o Código da sua entrada" + "\n" +codEntH );
+        JOptionPane.showMessageDialog(null,"Este é o Código da sua entrada" + "\n" +codEntH );
     }
     
-    public int buscarCodPRo(String nome) {
+    
+    public int buscarCodPro(String nome) {
         int cod = 0;
         try{
             sql = "Select pro_cod From tb_produtos where pro_nome = ?";
@@ -139,7 +162,8 @@ public class CRUDEntrada {
     public int codEnt(){
         int cod = 0;
         try{
-            sql = "select top 1 ent_cod from tb_entradas order by ent_cod desc";
+            //sql = "select top 1 ent_cod from tb_entradas order by ent_cod desc";
+            sql = "select ent_cod from tb_entradas order by ent_cod desc LIMIT 1;";
             st = connection.prepareStatement(sql);
             result = st.executeQuery();
             while(result.next()){

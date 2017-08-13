@@ -2,7 +2,7 @@ package model;
 
 import java.util.Date;
 
-public class NotasFiscais {
+public class NotaFiscal {
     private String numero, fornecedor;
     private int quantidade;
     private Date dtNotaFiscal;
