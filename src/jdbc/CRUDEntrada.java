@@ -102,7 +102,7 @@ public class CRUDEntrada {
                 st = connection.prepareStatement(sql);
                 st.setInt(1, qtdEnt);
                 st.setDate(2, dataSqlVal);
-                st.setString(3, "Geral");
+                st.setString(3, "Nutrição");
                 st.setInt(4,codPro);
                 st.executeUpdate();
             }catch(SQLException se){

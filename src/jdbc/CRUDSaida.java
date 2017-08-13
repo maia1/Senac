@@ -60,7 +60,7 @@ public class CRUDSaida {
                         "	   	tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
                         "	where\n" +
                         "	 	tb_produtos.pro_cod = ? and tb_estoques.est_dt_val = ? and \n" +
-                        "tb_estoques.est_arm = 'Nutrição';";
+                        "               tb_estoques.est_arm = 'Nutrição';";
 
             st = connection.prepareStatement(sql3);
             st.setInt(1, codProd);
@@ -69,16 +69,21 @@ public class CRUDSaida {
             while(result.next()){
                 codEst = result.getInt(2);
                 qtdEst = result.getInt(3);
+                
             }
+            JOptionPane.showMessageDialog(null,"Cod Est: "+codEst);
+            JOptionPane.showMessageDialog(null,"Qtd Est: "+qtdEst);
             }catch(SQLException e){
                 JOptionPane.showMessageDialog(null, "Erro no Armazem Saída!");
             }
             //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
             int resultado1 = 0;
                if(saida.getQuantidadeSai() > qtdEst){
-                   resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
+                   
+                   
                     JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
                }else{
+                resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
                 moviEsto(codEst, resultado1);
                 java.util.Date data1 = saida.getDataSaida();
                 java.sql.Date dataSaidaSQL = new java.sql.Date(data1.getTime());

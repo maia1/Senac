@@ -260,6 +260,10 @@ public class GuiSaida extends JPanel{
                 } catch (ProdutoNaoEncontrado ex) {
                     Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                //System.exit(0);
+                //GuiMenuPrincipal guiMenu = new GuiMenuPrincipal();
+                GuiMenuPrincipal guiSaida = new GuiMenuPrincipal();
+                guiSaida.main();
                 limpar();
             }
 
