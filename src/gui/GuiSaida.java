@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -165,12 +166,13 @@ public class GuiSaida extends JPanel{
     }
     
     public void definirEventos(){
+        cbProdutos.requestFocus();
         
         btAdicionar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
                 //cbProdutos = new JComboBox(buscarProdutos());
-                cbProdutos.requestFocus();
+                
                 if(cbProdutos.getSelectedItem().equals("") || tfQtd.getText().equals("") || tfDtVal.getText().equals("")){
                     JOptionPane.showMessageDialog(null, "Preencha todos os campos");
                     return;
@@ -184,7 +186,7 @@ public class GuiSaida extends JPanel{
                     tfDtVal.getText()
 
                });
-               limpar();
+              
                
                return ;
             }
@@ -251,20 +253,19 @@ public class GuiSaida extends JPanel{
                         
                     }
                     saidas.add(saida);
+                    
                 } 
                 try {
-                    //JOptionPane.showMessageDialog(null, saidas);
+                    
                     contSaida.cadastrar(saidas);
                 } catch (SQLException ex) {
                     Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ProdutoNaoEncontrado ex) {
                     Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                //System.exit(0);
-                //GuiMenuPrincipal guiMenu = new GuiMenuPrincipal();
-                GuiMenuPrincipal guiSaida = new GuiMenuPrincipal();
-                guiSaida.main();
+                
                 limpar();
+                
             }
 
             
@@ -272,10 +273,12 @@ public class GuiSaida extends JPanel{
         
     }
     private void limpar(){
-       cbProdutos.setSelectedItem("");
-       tfDtSaida.setText("");
-       tfProd.setText("");
-       tfQtd.setText("");
+int linhas = tbTabela.getRowCount();
+                JOptionPane.showMessageDialog(null, "Qtd Linhas: "+linhas);
+                DefaultTableModel dtm = (DefaultTableModel) tbTabela.getModel();
+                for(int i = 0; linhas>0; linhas--){
+                    dtm.removeRow(i);
+                }
     }
 
     public static Date getDataAtual(){   
