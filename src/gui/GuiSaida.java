@@ -74,7 +74,7 @@ public class GuiSaida extends JPanel{
         
         cbProdutos = new JComboBox(produtos);
         
-        tfProd = new JTextField();
+        //tfProd = new JTextField();
         tfQtd = new JTextField();
         tfDtSaida = new JTextField();
         tfDtVal = new JTextField();
@@ -86,16 +86,16 @@ public class GuiSaida extends JPanel{
         btExcluir = new JButton("Excluir");
         btLimpar = new JButton("Limpar");
                              //X   Y COMP  ALT
-        lbProduto.setBounds(105, 10, 60, 25);
-        cbProdutos.setBounds(25, 30, 270, 25);
-        tfProd.setBounds(90, 30, 200, 25);
+        lbProduto.setBounds(25, 30, 60, 25);
+        cbProdutos.setBounds(95, 30, 180, 25);
+        //tfProd.setBounds(90, 30, 200, 25);
         
-        lbDtVal.setBounds(350, 10, 100, 25);
-        tfDtVal.setBounds(345, 30, 100, 25);
+        lbDtVal.setBounds(290, 30, 90, 25);
+        tfDtVal.setBounds(390, 30, 70, 25);
         
         
-        lbQtd.setBounds(460, 10, 30, 25);
-        tfQtd.setBounds(465, 30, 45, 25);
+        lbQtd.setBounds(485, 30, 30, 25);
+        tfQtd.setBounds(525, 30, 45, 25);
         
         btAdicionar.setBounds(100,80,100,25);
         btRemover.setBounds(210,80,90,25);
@@ -106,7 +106,7 @@ public class GuiSaida extends JPanel{
         
         pnPrincipal = new JPanel();
         pnPrincipal.setLayout(null);
-        pnPrincipal.setBounds(0, 0, 600, 500);
+        pnPrincipal.setBounds(0, 0, 600, 400);
         
         pnPrincipal.add(lbProduto);
         pnPrincipal.add(cbProdutos);
@@ -127,9 +127,9 @@ public class GuiSaida extends JPanel{
         pnTabela.setBorder(new TitledBorder("Itens de Saída"));
         spTabela = new JScrollPane();
         DefaultTableModel tableModel = new DefaultTableModel(
-            new String[]{"PRODUTOS","QTD","DT.SAÍDA", "DT.VAL"},0){
+            new String[]{"PRODUTOS","QTD","DATA SAÍDA", "DATA VALIDADE"},0){
                 public boolean iscellEditable(int row, int col){
-                    if(col <3){
+                    if(col == 3){
                         return false;
                     }
                     return true;
@@ -141,15 +141,15 @@ public class GuiSaida extends JPanel{
         DefaultTableCellHeaderRenderer alinharDireita = new DefaultTableCellHeaderRenderer();
         alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(70);
+        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(290);
         tbTabela.getColumnModel().getColumn(0).setResizable(false);
         tbTabela.getColumnModel().getColumn(1).setResizable(false);
-        tbTabela.getColumnModel().getColumn(1).setPreferredWidth(230);
+        tbTabela.getColumnModel().getColumn(1).setPreferredWidth(40);
         tbTabela.getColumnModel().getColumn(2).setResizable(false);
-        tbTabela.getColumnModel().getColumn(2).setPreferredWidth(65);
+        tbTabela.getColumnModel().getColumn(2).setPreferredWidth(110);
         tbTabela.getColumnModel().getColumn(2).setCellRenderer(alinharDireita);
         tbTabela.getColumnModel().getColumn(3).setResizable(false);
-        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(65);
+        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(110);
         tbTabela.getColumnModel().getColumn(3).setCellRenderer(alinharDireita);
       
 
@@ -159,7 +159,7 @@ public class GuiSaida extends JPanel{
         
         spTabela.setViewportView(tbTabela);
         pnTabela.add(spTabela);
-        pnTabela.setBounds(20, 125, 400, 200);
+        pnTabela.setBounds(20, 125, 550, 200);
         pnPrincipal.add(pnTabela);
         
         add(pnPrincipal);
