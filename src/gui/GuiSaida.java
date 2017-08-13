@@ -274,7 +274,7 @@ public class GuiSaida extends JPanel{
     }
     private void limpar(){
 int linhas = tbTabela.getRowCount();
-                JOptionPane.showMessageDialog(null, "Qtd Linhas: "+linhas);
+                JOptionPane.showMessageDialog(null, "Qtd Linhas Tabela a limpar: "+linhas);
                 DefaultTableModel dtm = (DefaultTableModel) tbTabela.getModel();
                 for(int i = 0; linhas>0; linhas--){
                     dtm.removeRow(i);
