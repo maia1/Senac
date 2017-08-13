@@ -17,7 +17,7 @@ import model.Saidas;
 public class GuiMenuPrincipal extends JFrame{
     private JMenuBar mnBarra;
     private JMenu mnArquivo, mnEstoque;
-    private JMenuItem mtSair, mtPedido, mtEntrada, mtSaida;
+    private JMenuItem mtSair, mtEntrada, mtPedido, mtSaida;
     private Container container;
 
     public GuiMenuPrincipal() {
@@ -42,8 +42,8 @@ public class GuiMenuPrincipal extends JFrame{
         mnBarra.add(mnArquivo);
         mnBarra.add(mnEstoque);
         mnArquivo.add(mtSair);
-        mnEstoque.add(mtPedido);
         mnEstoque.add(mtEntrada);
+        mnEstoque.add(mtPedido);
         mnEstoque.add(mtSaida);
         setJMenuBar(mnBarra);
        
