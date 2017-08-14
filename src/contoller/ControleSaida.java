@@ -22,7 +22,7 @@ public class ControleSaida {
     public Saidas buscar(String nome ){
         Saidas sai = new Saidas();
         
-        sai = crudSaida.buscar(nome);
+        
         return sai;
     }
    
@@ -41,6 +41,19 @@ public class ControleSaida {
             prod[i++] = prods;
         }
         return prod;
+    }
+    
+    public String[] buscaProdEstoque(){
+
+        ArrayList<String> prodEstoques = crudSaida.buscaProdEstoques();
+ 
+        String[] prodEst = new String[prodEstoques.size()+1];
+        int i=1;
+        prodEst[0] = "";
+        for(String prodEstq: prodEstoques){
+            prodEst[i++] = prodEstq;
+        }
+        return prodEst;
     }
     
 

@@ -45,9 +45,6 @@ public class CRUDSaida {
            
             int codEst = 0;
             int qtdEst = 0;
-            
-            
-
 
             try{
   
@@ -81,8 +78,7 @@ public class CRUDSaida {
             //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
             int resultado1 = 0;
                if(saida.getQuantidadeSai() > qtdEst){
-                   
-                   
+
                     JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
                }else{
                 resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
@@ -130,6 +126,63 @@ public class CRUDSaida {
         }        
     }
     
+        public Saidas buscar(String nome) throws SQLException{
+        Saidas sai = new Saidas();
+        ArrayList<String> buscProEst = buscaProdEstoques();
+
+        
+        sql = "SELECT tb_produtos.pro_nome, \n" +
+                "tb_saidas.sai_dt, \n" +
+                "tb_it_sai.it_sai_qtd, \n" +
+                "tb_estoques.est_qtd AS 'Qtd Estoque' \n" +
+                "FROM tb_saidas\n" +
+                "INNER JOIN tb_it_sai\n" +
+                "ON tb_saidas.sai_cod = tb_it_sai.it_sai_sai_cod\n" +
+                "INNER JOIN tb_produtos\n" +
+                "ON tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod\n" +
+                "INNER JOIN tb_estoques\n" +
+                "ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
+                "WHERE tb_produtos.pro_nome = 'Café' OR tb_saidas.sai_dt = '2017-08-13'";
+        
+        st = connection.prepareStatement(sql);
+//            st.
+//            st.setDate(2, dataValSQL);//Estou buscando
+            result = st.executeQuery();
+//            while(result.next()){
+//                codEst = result.getInt(2);//Estou pegando
+//                qtdEst = result.getInt(3);//Estou pegando
+//                
+//            }
+//            JOptionPane.showMessageDialog(null,"Cod Est: "+codEst);
+//            JOptionPane.showMessageDialog(null,"Qtd Est: "+qtdEst);
+//            }catch(SQLException e){
+//                JOptionPane.showMessageDialog(null, "Erro no Armazem Saída!");
+//            }
+//            //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
+//            int resultado1 = 0;
+//               if(saida.getQuantidadeSai() > qtdEst){
+//
+//                    JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
+//               }else{
+//                resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
+//                moviEsto(codEst, resultado1);
+//                java.util.Date data1 = saida.getDataSaida();
+//                java.sql.Date dataSaidaSQL = new java.sql.Date(data1.getTime());
+//
+//                try{
+//                sql = "insert into tb_saidas(sai_dt) VALUES (?);";
+//                st = connection.prepareStatement(sql);
+//                st.setDate(1, dataSaidaSQL);
+//                st.executeUpdate();
+//                }catch(SQLException e){
+//                    JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
+//
+//                }  
+
+        
+        return sai;
+    }
+    
     public ArrayList<String> listarProdutos(){
             
             produtos.clear();    
@@ -140,7 +193,8 @@ public class CRUDSaida {
             sql = "SELECT * FROM tb_produtos\n" +
 "                    INNER JOIN tb_estoques\n" +
 "                    ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
-"                    WHERE tb_estoques.est_arm = 'Nutrição';";
+"                    WHERE tb_estoques.est_arm = 'Nutrição'" +
+"                    ORDER BY tb_estoques.est_dt_val ASC;";
             
             st = connection.prepareStatement(sql);
             //st.setInt(1, 2);
@@ -149,7 +203,7 @@ public class CRUDSaida {
             result = st.executeQuery();
             while(result.next()){
                 produtos.add(result.getString(2));//Refere-se à segunda coluna buscada pelo sql 
-
+                
 
             }
             return produtos;
@@ -208,31 +262,33 @@ public class CRUDSaida {
         }
     }
     
-    public Saidas buscar(String nome){
-        Saidas sai = new Saidas();
-        return sai;
-    }
-       public void excluir(String nome){}
-    
-    public ArrayList<String> buscarEstoques(){
-        categorias.clear();
+    public ArrayList<String> buscaProdEstoques(){
+        estoques.clear();
         try{
-            sql = "SELECT tb_produtos.pro_nome, tb_estoques.est_dt_val \n" +
+            sql = "SELECT tb_produtos.pro_nome, tb_estoques.est_dt_val, tb_estoques.est_qtd \n" +
                     "FROM tb_estoques\n" +
                     "INNER JOIN tb_produtos\n" +
                     "ON tb_estoques.est_pro_cod = tb_produtos.pro_cod\n" +
-                    "WHERE est_arm = 'Nutrição' ";
+                    "WHERE est_arm = 'Nutrição'" +
+                    "ORDER BY tb_estoques.est_dt_val ASC;";
             st = connection.prepareStatement(sql);
             result = st.executeQuery();
             while(result.next()){
-                estoques.add(result.getString(2));
+                estoques.add(result.getString(1));
+//                estoques.add(result.getString(2));
+//                estoques.add(result.getString(3));
             }
             return estoques;
         }catch(SQLException e){
-            resultado = "Erro";
+            resultado = "Erro na BuscaEstoque";
             return null;
         }
     }
+    
+
+       public void excluir(String nome){}
+    
+    
 
     
     // Maia

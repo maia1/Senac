@@ -70,7 +70,8 @@ public class GuiSaida extends JPanel{
     public void inicializarComponentes(){
         setLayout(null);
         String[] produtos = listarProdutos();
-        //String[] estoques = buscarCodPro();
+        String[] prodEst = buscaProdEst();
+        
         
         lbProduto = new JLabel("Produtos");
         lbQtd = new JLabel("Qtd");
@@ -148,7 +149,7 @@ public class GuiSaida extends JPanel{
         lbBDtVal = new JLabel("Data de Val.");
                 
         
-        cbBProdutos = new JComboBox(produtos);
+        cbBProdutos = new JComboBox(prodEst);
         
         //tfBProd = new JTextField();
         tfBQtd = new JTextField();
@@ -389,8 +390,10 @@ public class GuiSaida extends JPanel{
                 dtm.addRow(new Object[]{
                    
                     cbBProdutos.getSelectedItem(),
-                    tfBQtd.getText(),
-                    sdf.format(tfBDtVal.getText())
+                    
+//                    tfBQtd.getText(),
+//                    tfBDtVal.getText()
+               
 
                });
             }   
@@ -415,6 +418,9 @@ public class GuiSaida extends JPanel{
         String[] prod = contSaida.listarProdutos();
         return prod;
     }
-   
+   private String[] buscaProdEst(){
+        String[] prodEst = contSaida.buscaProdEstoque();
+        return prodEst;
+    }
      
 }
