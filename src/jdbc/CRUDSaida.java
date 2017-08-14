@@ -21,6 +21,7 @@ public class CRUDSaida {
     private ArrayList<Saidas> saidas;
     private ArrayList<String> pedidos;
     private ArrayList<String> categorias;
+    private ArrayList<String> estoques;
    
      
     public CRUDSaida(){
@@ -30,6 +31,7 @@ public class CRUDSaida {
         pedidos = new ArrayList<String>();
         produtos = new ArrayList<String>();
         categorias = new ArrayList<String>();
+        estoques = new ArrayList<String>();
   
      }
     
@@ -63,12 +65,12 @@ public class CRUDSaida {
                         "               tb_estoques.est_arm = 'Nutrição';";
 
             st = connection.prepareStatement(sql3);
-            st.setInt(1, codProd);
-            st.setDate(2, dataValSQL);
+            st.setInt(1, codProd);//Estou buscando
+            st.setDate(2, dataValSQL);//Estou buscando
             result = st.executeQuery();
             while(result.next()){
-                codEst = result.getInt(2);
-                qtdEst = result.getInt(3);
+                codEst = result.getInt(2);//Estou pegando
+                qtdEst = result.getInt(3);//Estou pegando
                 
             }
             JOptionPane.showMessageDialog(null,"Cod Est: "+codEst);
@@ -106,7 +108,7 @@ public class CRUDSaida {
                 sql2 = "insert into tb_it_sai(it_sai_qtd, it_sai_pro_cod, it_sai_sai_cod) VALUES (?,?,?);";
                 st = connection.prepareStatement(sql2);
                 st.setInt(1,saida.getQuantidadeSai());
-                st.setInt(2, codProd );//Devo buscar o codigo do produto!!!
+                st.setInt(2, codProd );
                 st.setInt(3, codSaid);
                 st.executeUpdate();
                 }catch(SQLException e){
@@ -120,7 +122,7 @@ public class CRUDSaida {
                         st.setInt(1, codEst);
                         st.executeUpdate();
                     }catch(SQLException e){
-                        JOptionPane.showMessageDialog(null, "Erro nos Itens Saída!");
+                        JOptionPane.showMessageDialog(null, "Erro ao Deletar o estoque!");
                     }
                 }
                
@@ -132,6 +134,8 @@ public class CRUDSaida {
             
             produtos.clear();    
             String produto = "";
+
+            
         try{ 
             sql = "SELECT * FROM tb_produtos\n" +
 "                    INNER JOIN tb_estoques\n" +
@@ -140,11 +144,13 @@ public class CRUDSaida {
             
             st = connection.prepareStatement(sql);
             //st.setInt(1, 2);
-            
+
             
             result = st.executeQuery();
             while(result.next()){
-                produtos.add(result.getString(2));//Refere-se à segunda coluna buscada pelo sql          
+                produtos.add(result.getString(2));//Refere-se à segunda coluna buscada pelo sql 
+
+
             }
             return produtos;
         }catch(SQLException e){
@@ -208,7 +214,25 @@ public class CRUDSaida {
     }
        public void excluir(String nome){}
     
-    
+    public ArrayList<String> buscarEstoques(){
+        categorias.clear();
+        try{
+            sql = "SELECT tb_produtos.pro_nome, tb_estoques.est_dt_val \n" +
+                    "FROM tb_estoques\n" +
+                    "INNER JOIN tb_produtos\n" +
+                    "ON tb_estoques.est_pro_cod = tb_produtos.pro_cod\n" +
+                    "WHERE est_arm = 'Nutrição' ";
+            st = connection.prepareStatement(sql);
+            result = st.executeQuery();
+            while(result.next()){
+                estoques.add(result.getString(2));
+            }
+            return estoques;
+        }catch(SQLException e){
+            resultado = "Erro";
+            return null;
+        }
+    }
 
     
     // Maia

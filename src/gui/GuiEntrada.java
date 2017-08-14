@@ -125,7 +125,7 @@ public class GuiEntrada extends JPanel{
         pn1.add(lbDescricao);
         pn1.add(btCadastrar);
         
-            //pn2 add
+        //pn2 add
         pn2.add(lbCod);
         pn2.add(tfCod);
         pn2.add(lbDataBus);
