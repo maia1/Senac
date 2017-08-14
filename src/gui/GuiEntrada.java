@@ -214,13 +214,13 @@ public class GuiEntrada extends JPanel{
         tbTabela1.getColumnModel().getColumn(1).setPreferredWidth(170);
         tbTabela1.getColumnModel().getColumn(2).setResizable(false);
         tbTabela1.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tbTabela1.getColumnModel().getColumn(2).setCellRenderer(alinharDireita);
+        tbTabela1.getColumnModel().getColumn(2).setCellRenderer(alinharDireita1);
         tbTabela1.getColumnModel().getColumn(3).setResizable(false);
         tbTabela1.getColumnModel().getColumn(3).setPreferredWidth(95);
-        tbTabela1.getColumnModel().getColumn(3).setCellRenderer(alinharDireita);
+        tbTabela1.getColumnModel().getColumn(3).setCellRenderer(alinharDireita1);
         tbTabela1.getColumnModel().getColumn(4).setResizable(false);
         tbTabela1.getColumnModel().getColumn(4).setPreferredWidth(95);
-        tbTabela1.getColumnModel().getColumn(4).setCellRenderer(alinharDireita);
+        tbTabela1.getColumnModel().getColumn(4).setCellRenderer(alinharDireita1);
        
        
         

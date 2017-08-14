@@ -43,8 +43,8 @@ public class GuiSaida extends JPanel{
     private JComboBox cbProdutos;
     private JComboBox cbBProdutos;
     
-    private JPanel pnPrincipal, pnTabela, pnTabelaBusca;
-    private JScrollPane spTabela, spTabelaBusca;
+    private JPanel pnPrincipal, pnTabelaCad, pnTabelaBusca;
+    private JScrollPane spTabelaCad, spTabelaBusca;
     private JTable tbTabelaCad, tbTabelaBusca;
     private ControleSaida contSaida;
     private SimpleDateFormat sdf;
@@ -92,7 +92,7 @@ public class GuiSaida extends JPanel{
         btRegistrar = new JButton("Registrar");
         btBuscar = new JButton("Buscar");
         btLimpar = new JButton("Limpar");
-        //btBAdicionar = new JButton("Adicionar");
+        
         
                              //X   Y COMP  ALT
         lbProduto.setBounds(25, 30, 60, 25);
@@ -112,7 +112,7 @@ public class GuiSaida extends JPanel{
         
         
         btRegistrar.setBounds(100, 345, 100, 25);
-        btBuscar.setBounds(100,80,100,25);
+        
         btLimpar.setBounds(210,345,80,25);
         
         //Abas
@@ -168,17 +168,22 @@ public class GuiSaida extends JPanel{
         lbBQtd.setBounds(485, 30, 30, 25);
         tfBQtd.setBounds(525, 30, 45, 25);
         
+        //btBAdicionar = new JButton("Adicionar");
+        btBuscar.setBounds(100,80,100,25);
+        
         //pn2 add
         pn2 = new JPanel(getLayout());
         
         pn2.add(lbBProduto);
         pn2.add(cbBProdutos);
-        //pn2.add(btBAdicionar);
+        
         
 //        pn2.add(lbBQtd);
 //        pn2.add(tfBQtd);
         pn2.add(lbBDtSaida);
         pn2.add(tfBDtSaida);
+        
+        //pn2.add(btBAdicionar);
         pn2.add(btBuscar);
         
         //Abas
@@ -190,9 +195,9 @@ public class GuiSaida extends JPanel{
         tpAba.add("Cadastro", pn1);
         tpAba.add("Buscar", pn2);
         
-        pnTabela = new JPanel(new BorderLayout());
-        pnTabela.setBorder(new TitledBorder("Itens de Saída"));
-        spTabela = new JScrollPane();
+        pnTabelaCad = new JPanel(new BorderLayout());
+        pnTabelaCad.setBorder(new TitledBorder("Itens de Saída"));
+        spTabelaCad = new JScrollPane();
         DefaultTableModel tableModel = new DefaultTableModel(
             new String[]{"PRODUTOS","QTD","DATA SAÍDA", "DATA VALIDADE"},0){
                 public boolean iscellEditable(int row, int col){
@@ -224,9 +229,9 @@ public class GuiSaida extends JPanel{
         tbTabelaCad.getTableHeader().setReorderingAllowed(false);
         tbTabelaCad.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         
-        spTabela.setViewportView(tbTabelaCad);
-        pnTabela.add(spTabela);
-        pnTabela.setBounds(20, 125, 550, 200);
+        spTabelaCad.setViewportView(tbTabelaCad);
+        pnTabelaCad.add(spTabelaCad);
+        pnTabelaCad.setBounds(20, 125, 550, 200);
         
         //Tabela de Busca
         
@@ -268,7 +273,7 @@ public class GuiSaida extends JPanel{
         
         
         
-        pn1.add(pnTabela);
+        pn1.add(pnTabelaCad);
         pn2.add(pnTabelaBusca);
         
         pnPrincipal.add(tpAba);
