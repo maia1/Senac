@@ -180,8 +180,8 @@ public class GuiSaida extends JPanel{
         
 //        pn2.add(lbBQtd);
 //        pn2.add(tfBQtd);
-        pn2.add(lbBDtSaida);
-        pn2.add(tfBDtSaida);
+//        pn2.add(lbBDtSaida);
+//        pn2.add(tfBDtSaida);
         
         //pn2.add(btBAdicionar);
         pn2.add(btBuscar);
