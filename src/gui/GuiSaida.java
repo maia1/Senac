@@ -39,7 +39,7 @@ public class GuiSaida extends JPanel{
     private JTextField tfProd, tfQtd, tfDtSaida, tfCodEst, tfDtVal;
     private JTextField tfBProd, tfBQtd, tfBDtSaida, tfBCodEst, tfBDtVal;
     private JButton btAdicionar, btRemover, btRegistrar,btLimpar;
-    private JButton btBAdicionar, btBuscar;
+    private JButton btBAdicionar, btBuscar, btBLimpar;
     private JComboBox cbProdutos;
     private JComboBox cbBProdutos;
     
@@ -92,6 +92,7 @@ public class GuiSaida extends JPanel{
         btRegistrar = new JButton("Registrar");
         btBuscar = new JButton("Buscar");
         btLimpar = new JButton("Limpar");
+        btBLimpar = new JButton("Limpar");
         
         
                              //X   Y COMP  ALT
@@ -170,6 +171,7 @@ public class GuiSaida extends JPanel{
         
         //btBAdicionar = new JButton("Adicionar");
         btBuscar.setBounds(100,80,100,25);
+        btBLimpar.setBounds(210,80,90,25);
         
         //pn2 add
         pn2 = new JPanel(getLayout());
@@ -180,11 +182,12 @@ public class GuiSaida extends JPanel{
         
 //        pn2.add(lbBQtd);
 //        pn2.add(tfBQtd);
-//        pn2.add(lbBDtSaida);
-//        pn2.add(tfBDtSaida);
+        pn2.add(lbBDtSaida);
+        pn2.add(tfBDtSaida);
         
         //pn2.add(btBAdicionar);
         pn2.add(btBuscar);
+        pn2.add(btBLimpar);
         
         //Abas
             
@@ -213,7 +216,7 @@ public class GuiSaida extends JPanel{
         DefaultTableCellHeaderRenderer alinharDireita = new DefaultTableCellHeaderRenderer();
         alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabelaCad.getColumnModel().getColumn(0).setPreferredWidth(290);
+        tbTabelaCad.getColumnModel().getColumn(0).setPreferredWidth(275);
         tbTabelaCad.getColumnModel().getColumn(0).setResizable(false);
         tbTabelaCad.getColumnModel().getColumn(1).setResizable(false);
         tbTabelaCad.getColumnModel().getColumn(1).setPreferredWidth(40);
@@ -239,7 +242,7 @@ public class GuiSaida extends JPanel{
         pnTabelaBusca.setBorder(new TitledBorder("Itens de Busca"));
         spTabelaBusca = new JScrollPane();
         DefaultTableModel tableModelBusca = new DefaultTableModel(
-            new String[]{"PRODUTOS","QTD","DATA VALIDADE"},0){
+            new String[]{"PRODUTOS","QTD","DATA DE SAÍDA"},0){
                 public boolean iscellEditable(int row, int col){
                     if(col == 3){
                         return false;
@@ -253,12 +256,12 @@ public class GuiSaida extends JPanel{
         //DefaultTableCellHeaderRenderer alinharDireitaBusca = new DefaultTableCellHeaderRenderer();
         alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabelaBusca.getColumnModel().getColumn(0).setPreferredWidth(290);
+        tbTabelaBusca.getColumnModel().getColumn(0).setPreferredWidth(325);
         tbTabelaBusca.getColumnModel().getColumn(0).setResizable(false);
         tbTabelaBusca.getColumnModel().getColumn(1).setResizable(false);
-        tbTabelaBusca.getColumnModel().getColumn(1).setPreferredWidth(40);
+        tbTabelaBusca.getColumnModel().getColumn(1).setPreferredWidth(50);
         tbTabelaBusca.getColumnModel().getColumn(2).setResizable(false);
-        tbTabelaBusca.getColumnModel().getColumn(2).setPreferredWidth(110);
+        tbTabelaBusca.getColumnModel().getColumn(2).setPreferredWidth(130);
         tbTabelaBusca.getColumnModel().getColumn(2).setCellRenderer(alinharDireita);
        
       
@@ -269,7 +272,7 @@ public class GuiSaida extends JPanel{
         
         spTabelaBusca.setViewportView(tbTabelaBusca);
         pnTabelaBusca.add(spTabelaBusca);
-        pnTabelaBusca.setBounds(20, 125, 550, 200);
+        pnTabelaBusca.setBounds(35, 125, 520, 200);
         
         
         
@@ -322,7 +325,8 @@ public class GuiSaida extends JPanel{
             @Override
                 public void actionPerformed(ActionEvent e) {
                     
-                    limpar();
+                    limparCad();
+                    
                 }
             });
         
@@ -380,16 +384,20 @@ public class GuiSaida extends JPanel{
                     Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                limpar();
+                limparCad();
             }
 
         });
+        
+        //Preciso continuar daqui, inserindo o nome do produto ou a data de saida
+        
         btBuscar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                
                 String nomeBuscaPro;
                     nomeBuscaPro = (String) cbBProdutos.getSelectedItem();
-                String dataValBus = tfBDtVal.getText();
+                    String dataSaida = tfBDtSaida.getText();
                 
                 DefaultTableModel dtm = (DefaultTableModel)tbTabelaBusca.getModel();
                 dtm.addRow(new Object[]{
@@ -401,19 +409,34 @@ public class GuiSaida extends JPanel{
                
 
                });
+            
             }   
         });
+        btBLimpar.addActionListener(new ActionListener() {
+            @Override
+                public void actionPerformed(ActionEvent e) {
+                    
+                    limparCad();
+                    
+                }
+            });
         
     }
-    private void limpar(){
+    private void limparCad(){
         int linhas = tbTabelaCad.getRowCount();
-        JOptionPane.showMessageDialog(null, "Qtd Linhas Tabela a limpar: "+linhas);
+        JOptionPane.showMessageDialog(null, "Limpar Tabelas");
         DefaultTableModel dtm = (DefaultTableModel) tbTabelaCad.getModel();
         for(int i = 0; linhas>0; linhas--){
             dtm.removeRow(i);
                 }
+        int linhasB = tbTabelaBusca.getRowCount();
+        
+        DefaultTableModel dtmB = (DefaultTableModel) tbTabelaBusca.getModel();
+        for(int i = 0; linhasB>0; linhasB--){
+            dtmB.removeRow(i);
+                }
     }
-
+   
     public static Date getDataAtual(){   
         Calendar c = Calendar.getInstance();    
         return c.getTime(); 
@@ -426,6 +449,11 @@ public class GuiSaida extends JPanel{
    private String[] buscaProdEst(){
         String[] prodEst = contSaida.buscaProdEstoque();
         return prodEst;
+    }
+   
+   private String[] buscarSaidasProdutos(){
+        String[] saidaEst = contSaida.buscarSaidasProdutos();
+        return saidaEst;
     }
      
 }

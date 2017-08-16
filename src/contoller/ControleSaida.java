@@ -56,6 +56,19 @@ public class ControleSaida {
         return prodEst;
     }
     
+    public String[] buscarSaidasProdutos(){
+
+        ArrayList<String> saidaEstoques = crudSaida.buscarSaidasProdutos();
+ 
+        String[] saidaEst = new String[saidaEstoques.size()+1];
+        int i=1;
+        saidaEst[0] = "";
+        for(String saidaEstq: saidaEstoques){
+            saidaEst[i++] = saidaEstq;
+        }
+        return saidaEst;
+    }
+    
 
 
 }

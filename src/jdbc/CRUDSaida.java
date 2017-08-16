@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import model.Estoques;
 import model.Produtos;
@@ -40,6 +41,7 @@ public class CRUDSaida {
             int codProd = codPRo(saida.getNomePro());
 
             java.util.Date data2 = saida.getDataVal();
+            java.util.Date data3 = saida.getDataSaida();
             java.sql.Date dataValSQL = new java.sql.Date(data2.getTime());
 
            
@@ -79,7 +81,7 @@ public class CRUDSaida {
             int resultado1 = 0;
                if(saida.getQuantidadeSai() > qtdEst){
 
-                    JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
+                    JOptionPane.showMessageDialog(null, "Quantidade insuficiente ou produto não encontrado no estoque.");
                }else{
                 resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
                 moviEsto(codEst, resultado1);
@@ -194,6 +196,7 @@ public class CRUDSaida {
 "                    INNER JOIN tb_estoques\n" +
 "                    ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
 "                    WHERE tb_estoques.est_arm = 'Nutrição'" +
+"                    GROUP BY tb_produtos.pro_nome\n" +
 "                    ORDER BY tb_estoques.est_dt_val ASC;";
             
             st = connection.prepareStatement(sql);
@@ -262,21 +265,19 @@ public class CRUDSaida {
         }
     }
     
-    public ArrayList<String> buscaProdEstoques(){
+    public ArrayList<String> buscaProdEstoques(){ //Está na aba de buscar, mas será corrigida
         estoques.clear();
         try{
-            sql = "SELECT tb_produtos.pro_nome, tb_estoques.est_dt_val, tb_estoques.est_qtd \n" +
-                    "FROM tb_estoques\n" +
-                    "INNER JOIN tb_produtos\n" +
-                    "ON tb_estoques.est_pro_cod = tb_produtos.pro_cod\n" +
-                    "WHERE est_arm = 'Nutrição'" +
-                    "ORDER BY tb_estoques.est_dt_val ASC;";
+            sql = "SELECT  tb_produtos.pro_nome\n" +
+                    "FROM `tb_produtos` \n" +
+                    "GROUP BY tb_produtos.pro_nome\n" +
+                    "ORDER BY tb_produtos.pro_nome ASC";
             st = connection.prepareStatement(sql);
             result = st.executeQuery();
             while(result.next()){
                 estoques.add(result.getString(1));
-//                estoques.add(result.getString(2));
-//                estoques.add(result.getString(3));
+                //estoques.add(result.getString(2));
+                //estoques.add(result.getString(3));
             }
             return estoques;
         }catch(SQLException e){
@@ -285,7 +286,50 @@ public class CRUDSaida {
         }
     }
     
-
+    public ArrayList<String> buscarSaidasProdutos(){
+        estoques.clear();
+        for (Saidas saida : saidas){
+        java.util.Date dataBusc = saida.getDataSaida();
+        java.sql.Date dataSaidaSQL = new java.sql.Date(dataBusc.getTime());
+        try{
+            sql = "SELECT tb_produtos.pro_nome AS'Produtos',\n" +
+                    "tb_saidas.sai_dt AS'Data Saída', \n" +
+                    "SUM(tb_it_sai.it_sai_qtd) AS 'Qtd Saídas', \n" +
+                    "tb_estoques.est_qtd AS 'Qtd Estoque' \n" +
+                    "FROM tb_saidas\n" +
+                    "INNER JOIN tb_it_sai\n" +
+                    "ON tb_saidas.sai_cod = tb_it_sai.it_sai_sai_cod\n" +
+                    "INNER JOIN tb_produtos\n" +
+                    "ON tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod\n" +
+                    "INNER JOIN tb_estoques\n" +
+                    "ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
+                    "WHERE tb_produtos.pro_nome = '?' AND tb_saidas.sai_dt = '?'";
+            st = connection.prepareStatement(sql);
+            String nome = null;
+            st.setString(1, nome);
+            st.setDate(2, dataSaidaSQL);
+            result = st.executeQuery();
+            JOptionPane.showMessageDialog(null, result);
+            
+            while(result.next()){
+                estoques.add(result.getString(1));
+                estoques.add(result.getString(2));
+                estoques.add(result.getString(3));
+                estoques.add(result.getString(4));
+            }
+            JOptionPane.showMessageDialog(null, estoques);
+            
+        }catch(SQLException e){
+            resultado = "Erro na Busca de Saídas Estoque";
+            return null;
+        }
+        
+        }
+        return estoques;
+    }
+    
+    
+    
        public void excluir(String nome){}
     
     
