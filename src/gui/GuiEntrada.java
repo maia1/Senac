@@ -34,8 +34,8 @@ public class GuiEntrada extends JPanel{
  
     private JLabel lbCod, lbProd, lbQtd, lbDtEnt, lbdtVal,lbDescricao, lbDataBus;
     private JTextField tfCod, tfProd, tfQtd, tfDtVal, tfDescricao, tfDataBus;
-    private JComboBox cbCategorias;
-    private JButton btAdicionar, btRemover, btConcluir, btCadastrar, btBuscar;
+    private JComboBox cbCategorias, cbBcodEnt;
+    private JButton btAdicionar, btRemover, btConcluir, btCadastrar, btBBuscar, btBMostrar;
     private JPanel pnPrincipal, pnTabela, pnTabela1;
     private JScrollPane spTabela, spTabela1;
     private JTable tbTabela, tbTabela1;
@@ -71,9 +71,14 @@ public class GuiEntrada extends JPanel{
         tfDescricao = new JTextField();
         tfDataBus = new JTextField();
         
+        cbBcodEnt = new JComboBox();
+        btBMostrar = new JButton("Mostrar");
+        
+        cbBcodEnt.setBounds(20, 100, 100, 25);
+        btBMostrar.setBounds(140, 100, 100, 25);
         
         btCadastrar = new JButton("Cadastrar");
-        btBuscar = new JButton("Buscar");
+        btBBuscar = new JButton("Buscar");
         btAdicionar = new JButton("Adicionar");
         btRemover = new JButton("Remover");
         btConcluir = new JButton("Concluir");
@@ -99,7 +104,7 @@ public class GuiEntrada extends JPanel{
         btRemover.setBounds(130,210,90,25);
         btConcluir.setBounds(230,210,100,25);
         btCadastrar.setBounds(400,10,100,25);
-        btBuscar.setBounds(400, 45, 100, 25);
+        btBBuscar.setBounds(400, 45, 100, 25);
         
         //Abas
         
@@ -114,7 +119,6 @@ public class GuiEntrada extends JPanel{
         pn1.add(lbDtEnt);
         pn1.add(lbdtVal);
         pn1.add(tfProd);
-        pn1.add(btBuscar);
         pn1.add(tfQtd);
         pn1.add(cbCategorias);
         pn1.add(tfDtVal);
@@ -130,7 +134,9 @@ public class GuiEntrada extends JPanel{
         pn2.add(tfCod);
         pn2.add(lbDataBus);
         pn2.add(tfDataBus);
-        pn2.add(btBuscar);
+        pn2.add(btBBuscar);
+        pn2.add(btBMostrar);
+        pn2.add(cbBcodEnt);
             
         //Abas
             
@@ -194,7 +200,7 @@ public class GuiEntrada extends JPanel{
         pnTabela1.setBorder(new TitledBorder("Itens da Entrada"));
         spTabela1 = new JScrollPane();
         DefaultTableModel tableModel1 = new DefaultTableModel(
-            new String[]{"PRODUTO", "QTD","DTVAL","CAT","DESC"},0){
+            new String[]{"PRODUTO", "QTD"},0){
                 public boolean iscellEditable(int row, int col){
                     if(col == 3){
                         return false;
@@ -212,17 +218,6 @@ public class GuiEntrada extends JPanel{
         tbTabela1.getColumnModel().getColumn(0).setResizable(false);
         tbTabela1.getColumnModel().getColumn(1).setResizable(false);
         tbTabela1.getColumnModel().getColumn(1).setPreferredWidth(170);
-        tbTabela1.getColumnModel().getColumn(2).setResizable(false);
-        tbTabela1.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tbTabela1.getColumnModel().getColumn(2).setCellRenderer(alinharDireita1);
-        tbTabela1.getColumnModel().getColumn(3).setResizable(false);
-        tbTabela1.getColumnModel().getColumn(3).setPreferredWidth(95);
-        tbTabela1.getColumnModel().getColumn(3).setCellRenderer(alinharDireita1);
-        tbTabela1.getColumnModel().getColumn(4).setResizable(false);
-        tbTabela1.getColumnModel().getColumn(4).setPreferredWidth(95);
-        tbTabela1.getColumnModel().getColumn(4).setCellRenderer(alinharDireita1);
-       
-       
         
         tbTabela1.getTableHeader().setReorderingAllowed(false);
         tbTabela1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -348,20 +343,57 @@ public class GuiEntrada extends JPanel{
             }
         });
         
-        btBuscar.addActionListener(new ActionListener() {
+        btBBuscar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
-                int codBus = 0;
-                    codBus = Integer.parseInt(tfCod.getText());
-                String dataBus = tfDataBus.getText();
-                if(codBus == 0){  
-                    if(dataBus.equals("")){
+                ArrayList<String> codigos = new ArrayList<String>();
+                if(tfCod.getText().equals("")){
+                    if(tfDataBus.getText().equals("")){
+                        JOptionPane.showMessageDialog(null, "Informe Código ou Data");
+                    }else{
+                        Date data = null;
+                        String dataBus = tfDataBus.getText();
+                        try {
+                            data = sdf.parse(dataBus);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(GuiEntrada.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        codigos = contEntrada.buscarCodigos(data);
+                        String cod1 = "";
                         
+                        cbBcodEnt.addItem(cod1);
+                       
+                        for(String cod : codigos){
+                           cbBcodEnt.addItem(cod);
+                        }
+
                     }
-                }else{
-                    //contEntrada.buscar(codBus);
                 }
             }   
+        });
+        
+        btBMostrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ArrayList<Entradas> entradas = new ArrayList<Entradas>();
+                
+                int codBus = Integer.parseInt(""+cbBcodEnt.getSelectedItem());
+                Produtos produto = new Produtos();
+                entradas = contEntrada.buscarProdutos(codBus);
+                
+                
+                for(Entradas entrada : entradas){
+                    produto = entrada.getProduto();
+                    DefaultTableModel dtm1 = (DefaultTableModel)tbTabela1.getModel();
+                    dtm1.addRow(new Object[]{
+                    
+                    produto.getNome(),
+                    entrada.getQuantidade()
+
+                    });
+                }
+            }
+        
         });
       
     }

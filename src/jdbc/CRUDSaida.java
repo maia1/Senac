@@ -303,7 +303,7 @@ public class CRUDSaida {
                     "ON tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod\n" +
                     "INNER JOIN tb_estoques\n" +
                     "ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
-                    "WHERE tb_produtos.pro_nome = '?' AND tb_saidas.sai_dt = '?'";
+                    "WHERE tb_produtos.pro_nome = '?'";
             st = connection.prepareStatement(sql);
             String nome = null;
             st.setString(1, nome);

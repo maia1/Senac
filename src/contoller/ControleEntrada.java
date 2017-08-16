@@ -29,4 +29,19 @@ public class ControleEntrada {
         }
         return cat;
     }
+    
+    public ArrayList<String> buscarCodigos(Date data){
+        ArrayList<String> codigos = new ArrayList<String>();
+        
+        codigos =  crudEntrada.buscarCodigos(data);
+   
+        return codigos;
+      
+    }
+    
+    public ArrayList<Entradas> buscarProdutos(int cod){
+        ArrayList<Entradas> entradas = new ArrayList<Entradas>();
+        entradas = crudEntrada.buscarProdutosCod(cod);
+        return entradas;
+    }
 }

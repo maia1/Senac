@@ -27,7 +27,7 @@ public class CRUDEntrada {
         connection = conectar.getConnection();
     }
     
-    public void cadastrarProduto(Produtos produto, Date dtEnt, ArrayList<Entradas> entradas){
+    public void cadastrarProduto(Produtos produto, Date dtEnt, Entradas entrada){
             Categorias cat = produto.getCategoria();
             
             int cod = buscarCodPro(produto.getNome());
@@ -52,21 +52,22 @@ public class CRUDEntrada {
                 }catch(SQLException e){
                     JOptionPane.showMessageDialog(null, "Erro no cadastro!");
                 }
-                    cadastrarDataEnt(dtEnt, entradas);
-                }else{
-                    cadastrarDataEnt(dtEnt, entradas); 
-                } 
+            }else{
+                     
+            } 
+            cadastrarDataEnt(dtEnt, entrada);
     }   
    
     
     public void cadastrar(ArrayList<Entradas> entradas, Date dtEnt){
         contador = 0;
+        
         for (Entradas entrada : entradas){
-            cadastrarProduto(entrada.getProduto(), dtEnt, entradas);
+            cadastrarProduto(entrada.getProduto(), dtEnt, entrada);
         }
     }    
     
-    public void cadastrarDataEnt(Date dtEnt,ArrayList<Entradas> entradas){
+    public void cadastrarDataEnt(Date dtEnt, Entradas entrada){
         java.util.Date data = dtEnt;
         java.sql.Date dataSql = new java.sql.Date(data.getTime());
         
@@ -80,16 +81,18 @@ public class CRUDEntrada {
                 resultado = "Erro!";
             }
             contador = contador+1;
+            //int codEntH = codEnt();
+            JOptionPane.showMessageDialog(null,"Este é o Código da sua entrada" + "\n" + codEnt() );
         }else{
             
         }
-        cadastrarItensentrada(entradas);
+        cadastrarItensentrada(entrada);
     }
     
-    public void cadastrarEstoque(ArrayList<Entradas> entradas){
+    public void cadastrarEstoque(Entradas entrada){
        Produtos produto = new Produtos();
-       
-        for(Entradas entrada : entradas){
+
+            
             produto = entrada.getProduto();
             int qtdEnt = entrada.getQuantidade();
             int codPro = buscarCodPro(produto.getNome());
@@ -106,14 +109,11 @@ public class CRUDEntrada {
                 st.setInt(4,codPro);
                 st.executeUpdate();
             }catch(SQLException se){
-                resultado = "Erro!";
-            }
+                resultado = "Erro!";  
         }
     }
         
-    public void cadastrarItensentrada(ArrayList<Entradas> entradas){
-        for (Entradas entrada : entradas){
-            
+    public void cadastrarItensentrada(Entradas entrada){
             java.util.Date data = entrada.getDataVal();
             java.sql.Date dataSql = new java.sql.Date(data.getTime());
             
@@ -134,10 +134,10 @@ public class CRUDEntrada {
                 }catch(SQLException e){
                     resultado = "Erro";
                 }
-        } 
-        cadastrarEstoque(entradas);
-        int codEntH = codEnt();
-        JOptionPane.showMessageDialog(null,"Este é o Código da sua entrada" + "\n" +codEntH );
+            
+        cadastrarEstoque(entrada);
+        
+        
     }
     
     
@@ -209,8 +209,65 @@ public class CRUDEntrada {
             return 0;
         }
     }
-  
-//    public void buscar(){}
+      
+        public ArrayList<String> buscarCodigos(Date data){
+            ArrayList<String> codigos = new ArrayList<String>();
+            
+            java.util.Date data1 = data;
+            java.sql.Date dataSql = new java.sql.Date(data1.getTime());
+            
+            try{
+                sql = "SELECT tb_entradas.ent_cod from tb_entradas where tb_entradas.ent_dt = ? ";
+                st = connection.prepareStatement(sql);
+                st.setDate(1, dataSql);
+                result = st.executeQuery();
+                while(result.next()){
+                    String cod = "";
+                    cod = ""+result.getInt(1);
+                    codigos.add(cod);
+                }
+                return codigos; 
+            }catch(SQLException se){
+                resultado = "Erro!"; 
+                return null;
+            } 
+        }
+    
+        
+        
+        public ArrayList<Entradas> buscarProdutosCod(int cod){
+            
+            ArrayList<Entradas> entradas = new ArrayList<Entradas>();
+
+            try{
+                sql = "SELECT tb_produtos.pro_nome as 'Produto',\n" +
+                "tb_it_ent.it_ent_qtd as 'Quantidade' \n" +
+                "from tb_produtos\n" +
+                "inner join tb_it_ent\n" +
+                "on tb_it_ent.it_ent_pro_cod = tb_produtos.pro_cod\n" +
+                "inner join tb_entradas\n" +
+                "on tb_entradas.ent_cod = tb_it_ent.it_ent_ent_cod\n" +
+                "where tb_entradas.ent_cod = ?";
+                st = connection.prepareStatement(sql);
+                st.setInt(1, cod);
+                result = st.executeQuery();
+               
+                while(result.next()){
+                   Produtos produto = new Produtos();
+                    Entradas entrada = new Entradas();
+                    
+                    produto.setNome(result.getString(1));
+                    entrada.setProduto(produto);
+                    entrada.setQuantidade(result.getInt(2));
+                    entradas.add(entrada);
+                }
+                return entradas;
+            }catch(SQLException se){
+                resultado = "Erro!";
+                return null;
+        }
+      }
+      
 //    public void editar(){}
 //    public void excluir(){}
 }
