@@ -224,7 +224,7 @@ public class GuiEntrada extends JPanel{
         
         spTabela1.setViewportView(tbTabela1);
         pnTabela1.add(spTabela1);
-        pnTabela1.setBounds(30, 250, 550, 250);
+        pnTabela1.setBounds( 100, 150,300, 250);
         
         
         pn1.add(pnTabela);

@@ -37,6 +37,7 @@ public class CRUDSaida {
      }
     
     public void cadastrar(ArrayList<Saidas> saidas){
+        int contador = 0;
         for (Saidas saida : saidas){
             int codProd = codPRo(saida.getNomePro());
 
@@ -87,17 +88,21 @@ public class CRUDSaida {
                 moviEsto(codEst, resultado1);
                 java.util.Date data1 = saida.getDataSaida();
                 java.sql.Date dataSaidaSQL = new java.sql.Date(data1.getTime());
+                
+                
+                if(contador == 0){
+                
+                    try{
+                    sql = "insert into tb_saidas(sai_dt) VALUES (?);";
+                    st = connection.prepareStatement(sql);
+                    st.setDate(1, dataSaidaSQL);
+                    st.executeUpdate();
+                    }catch(SQLException e){
+                        JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
 
-                try{
-                sql = "insert into tb_saidas(sai_dt) VALUES (?);";
-                st = connection.prepareStatement(sql);
-                st.setDate(1, dataSaidaSQL);
-                st.executeUpdate();
-                }catch(SQLException e){
-                    JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
-
-                }  
-
+                    }
+                    contador = contador + 1;
+                }
                 int codSaid = codSai();
 
 
