@@ -327,7 +327,7 @@ public class GuiEntrada extends JPanel{
                     Logger.getLogger(GuiEntrada.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 contEntrada.cadastrar(entradas, data1);
-                limpar();
+                limparTudo();
             }
         });
        
@@ -359,9 +359,6 @@ public class GuiEntrada extends JPanel{
                             Logger.getLogger(GuiEntrada.class.getName()).log(Level.SEVERE, null, ex);
                         }
                         codigos = contEntrada.buscarCodigos(data);
-                        String cod1 = "";
-                        
-                        cbBcodEnt.addItem(cod1);
                        
                         for(String cod : codigos){
                            cbBcodEnt.addItem(cod);
@@ -375,6 +372,7 @@ public class GuiEntrada extends JPanel{
         btBMostrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                limparTudo();
                 ArrayList<Entradas> entradas = new ArrayList<Entradas>();
                 
                 int codBus = Integer.parseInt(""+cbBcodEnt.getSelectedItem());
@@ -402,8 +400,7 @@ public class GuiEntrada extends JPanel{
         String[] categor =  contEntrada.listarCategorias();
         return categor;        
     }
-    
-        public void limpar(){
+        private void limpar(){
            tfCod.setText("");
            tfDtVal.setText("");
            cbCategorias.setSelectedIndex(0);
@@ -411,6 +408,24 @@ public class GuiEntrada extends JPanel{
            tfQtd.setText("");
         }
 
-      
+        private void limparTudo(){
+           tfCod.setText("");
+           tfDtVal.setText("");
+           cbCategorias.setSelectedIndex(0);
+           tfProd.setText("");
+           tfQtd.setText("");
+        int linhas = tbTabela.getRowCount();
+        JOptionPane.showMessageDialog(null, "Limpar Tabelas");
+        DefaultTableModel dtm = (DefaultTableModel) tbTabela.getModel();
+        for(int i = 0; linhas>0; linhas--){
+            dtm.removeRow(i);
+                }
+        int linhasB = tbTabela1.getRowCount();
+        
+        DefaultTableModel dtmB = (DefaultTableModel) tbTabela1.getModel();
+        for(int i = 0; linhasB>0; linhasB--){
+            dtmB.removeRow(i);
+                }
+    }
 }
    

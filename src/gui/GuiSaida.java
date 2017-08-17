@@ -70,7 +70,8 @@ public class GuiSaida extends JPanel{
     public void inicializarComponentes(){
         setLayout(null);
         String[] produtos = listarProdutos();
-        String[] prodEst = buscaProdEst();
+        String[] prodEst = buscaItensSaida();
+        //String[] saidaEst = buscarSaidasProdutos();
         
         
         lbProduto = new JLabel("Produtos");
@@ -325,7 +326,7 @@ public class GuiSaida extends JPanel{
             @Override
                 public void actionPerformed(ActionEvent e) {
                     
-                    limparCad();
+                    limpar();
                     
                 }
             });
@@ -384,7 +385,7 @@ public class GuiSaida extends JPanel{
                     Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 
-                limparCad();
+                limpar();
             }
 
         });
@@ -394,35 +395,44 @@ public class GuiSaida extends JPanel{
         btBuscar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                ArrayList<Saidas> saidas = new ArrayList<Saidas>();
+                //String nomeBuscaPro = (String) cbBProdutos.getSelectedItem();
                 
-                String nomeBuscaPro;
-                    nomeBuscaPro = (String) cbBProdutos.getSelectedItem();
-                    String dataSaida = tfBDtSaida.getText();
-                
-                DefaultTableModel dtm = (DefaultTableModel)tbTabelaBusca.getModel();
-                dtm.addRow(new Object[]{
-                   
-                    cbBProdutos.getSelectedItem(),
-                    
-//                    tfBQtd.getText(),
-//                    tfBDtVal.getText()
+                String dataSaida = tfBDtSaida.getText();
                
-
-               });
-            
+                Date data = null;
+                
+                try {
+                    data = sdf.parse(dataSaida);
+                } catch (ParseException ex) {
+                    Logger.getLogger(GuiSaida.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                saidas = contSaida.buscarSaidasProdutos(data);
+                
+                for(Saidas saida : saidas){
+                    
+                    DefaultTableModel dtm = (DefaultTableModel)tbTabelaBusca.getModel();
+                    dtm.addRow(new Object[]{
+                        saida.getNomePro(),
+                        saida.getQuantidadeSai(),
+                        dataSaida
+                    });
+                }
             }   
         });
+        
+        
         btBLimpar.addActionListener(new ActionListener() {
             @Override
                 public void actionPerformed(ActionEvent e) {
                     
-                    limparCad();
-                    
+                    limpar();
                 }
             });
         
     }
-    private void limparCad(){
+    private void limpar(){
         int linhas = tbTabelaCad.getRowCount();
         JOptionPane.showMessageDialog(null, "Limpar Tabelas");
         DefaultTableModel dtm = (DefaultTableModel) tbTabelaCad.getModel();
@@ -446,14 +456,14 @@ public class GuiSaida extends JPanel{
         String[] prod = contSaida.listarProdutos();
         return prod;
     }
-   private String[] buscaProdEst(){
-        String[] prodEst = contSaida.buscaProdEstoque();
-        return prodEst;
+   private String[] buscaItensSaida(){//Não está sendo utilizado
+        String[] prodItSai = contSaida.buscaProdEstoque();
+        return prodItSai;
     }
    
-   private String[] buscarSaidasProdutos(){
-        String[] saidaEst = contSaida.buscarSaidasProdutos();
-        return saidaEst;
-    }
-     
+//   private String[] buscarSaidasProdutos(){//Lista os produtos que saíram
+//        String[] saidaEst = contSaida.buscarSaidasProdutos();
+//        return saidaEst;
+//    }
+//     
 }

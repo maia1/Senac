@@ -133,62 +133,6 @@ public class CRUDSaida {
         }        
     }
     
-        public Saidas buscar(String nome) throws SQLException{
-        Saidas sai = new Saidas();
-        ArrayList<String> buscProEst = buscaProdEstoques();
-
-        
-        sql = "SELECT tb_produtos.pro_nome, \n" +
-                "tb_saidas.sai_dt, \n" +
-                "tb_it_sai.it_sai_qtd, \n" +
-                "tb_estoques.est_qtd AS 'Qtd Estoque' \n" +
-                "FROM tb_saidas\n" +
-                "INNER JOIN tb_it_sai\n" +
-                "ON tb_saidas.sai_cod = tb_it_sai.it_sai_sai_cod\n" +
-                "INNER JOIN tb_produtos\n" +
-                "ON tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod\n" +
-                "INNER JOIN tb_estoques\n" +
-                "ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
-                "WHERE tb_produtos.pro_nome = 'Café' OR tb_saidas.sai_dt = '2017-08-13'";
-        
-        st = connection.prepareStatement(sql);
-//            st.
-//            st.setDate(2, dataValSQL);//Estou buscando
-            result = st.executeQuery();
-//            while(result.next()){
-//                codEst = result.getInt(2);//Estou pegando
-//                qtdEst = result.getInt(3);//Estou pegando
-//                
-//            }
-//            JOptionPane.showMessageDialog(null,"Cod Est: "+codEst);
-//            JOptionPane.showMessageDialog(null,"Qtd Est: "+qtdEst);
-//            }catch(SQLException e){
-//                JOptionPane.showMessageDialog(null, "Erro no Armazem Saída!");
-//            }
-//            //JOptionPane.showMessageDialog(,null,dataSaidaSQL);
-//            int resultado1 = 0;
-//               if(saida.getQuantidadeSai() > qtdEst){
-//
-//                    JOptionPane.showMessageDialog(null, "Quantidade insuficiente no estoque.");
-//               }else{
-//                resultado1 = qtdEst - saida.getQuantidadeSai();//Realizando a baixa no estoque
-//                moviEsto(codEst, resultado1);
-//                java.util.Date data1 = saida.getDataSaida();
-//                java.sql.Date dataSaidaSQL = new java.sql.Date(data1.getTime());
-//
-//                try{
-//                sql = "insert into tb_saidas(sai_dt) VALUES (?);";
-//                st = connection.prepareStatement(sql);
-//                st.setDate(1, dataSaidaSQL);
-//                st.executeUpdate();
-//                }catch(SQLException e){
-//                    JOptionPane.showMessageDialog(null, "Erro na Data Saída!");
-//
-//                }  
-
-        
-        return sai;
-    }
     
     public ArrayList<String> listarProdutos(){
             
@@ -291,46 +235,49 @@ public class CRUDSaida {
         }
     }
     
-    public ArrayList<String> buscarSaidasProdutos(){
-        estoques.clear();
-        for (Saidas saida : saidas){
-        java.util.Date dataBusc = saida.getDataSaida();
+    public ArrayList<Saidas> buscarSaidasProdutos(Date data){
+        //Busca por data
+        
+        ArrayList<Saidas> saidas = new ArrayList<Saidas>();
+        
+        java.util.Date dataBusc = data;
         java.sql.Date dataSaidaSQL = new java.sql.Date(dataBusc.getTime());
         try{
-            sql = "SELECT tb_produtos.pro_nome AS'Produtos',\n" +
-                    "tb_saidas.sai_dt AS'Data Saída', \n" +
-                    "SUM(tb_it_sai.it_sai_qtd) AS 'Qtd Saídas', \n" +
-                    "tb_estoques.est_qtd AS 'Qtd Estoque' \n" +
-                    "FROM tb_saidas\n" +
-                    "INNER JOIN tb_it_sai\n" +
-                    "ON tb_saidas.sai_cod = tb_it_sai.it_sai_sai_cod\n" +
-                    "INNER JOIN tb_produtos\n" +
-                    "ON tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod\n" +
-                    "INNER JOIN tb_estoques\n" +
-                    "ON tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
-                    "WHERE tb_produtos.pro_nome = '?'";
-            st = connection.prepareStatement(sql);
-            String nome = null;
-            st.setString(1, nome);
-            st.setDate(2, dataSaidaSQL);
+            sql = "SELECT tb_produtos.pro_nome as 'Produto',\n" +
+                    "sum(tb_it_sai.it_sai_qtd) as 'Quantidade',\n" +
+                    "tb_saidas.sai_dt AS 'Data Saída',\n" +
+                    "tb_saidas.sai_cod as 'Cód. Saída'\n" +
+                    "from tb_produtos\n" +
+                    "inner join tb_it_sai\n" +
+                    "on tb_it_sai.it_sai_pro_cod = tb_produtos.pro_cod\n" +
+                    "inner join tb_saidas\n" +
+                    "on tb_saidas.sai_cod = tb_it_sai.it_sai_sai_cod\n" +
+                    "where \n" +
+                    "tb_saidas.sai_dt = ?\n" +
+                    "GROUP BY tb_produtos.pro_nome ASC";
+            st = connection.prepareStatement(sql);         
+            st.setDate(1, dataSaidaSQL);
             result = st.executeQuery();
-            JOptionPane.showMessageDialog(null, result);
+            
             
             while(result.next()){
-                estoques.add(result.getString(1));
-                estoques.add(result.getString(2));
-                estoques.add(result.getString(3));
-                estoques.add(result.getString(4));
+                
+                Saidas saida = new Saidas();
+                saida.setNomePro(result.getString(1));
+                saida.setQuantidadeSai(result.getInt(2));
+                saida.setDataSaida(dataSaidaSQL);
+                
+                saidas.add(saida);    
             }
-            JOptionPane.showMessageDialog(null, estoques);
+            
             
         }catch(SQLException e){
             resultado = "Erro na Busca de Saídas Estoque";
             return null;
         }
         
-        }
-        return estoques;
+        
+        return saidas;
     }
     
     
