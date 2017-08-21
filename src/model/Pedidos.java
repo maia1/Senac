@@ -7,14 +7,24 @@ package model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import model.ItensPedidos;
 
-public class Pedidos {
+public class Pedidos extends ItensPedidos{
     private int codigo, quantidade;
     private Date dtPedido;
+    private String nomePro;
     private SimpleDateFormat sdf;
     
     public Pedidos(){
         sdf = new SimpleDateFormat("dd/MM/yyyy");
+    }
+
+    public String getNomePro() {
+        return nomePro;
+    }
+
+    public void setNomePro(String nomePro) {
+        this.nomePro = nomePro;
     }
 
     public int getCodigo() {
@@ -51,7 +61,7 @@ public class Pedidos {
 
     @Override
     public String toString() {
-        return "Pedidos{" + "codigo=" + codigo + ", quantidade=" + quantidade + ", dtPedido=" + dtPedido + ", sdf=" + sdf + '}';
+        return "Pedidos{" + "codigo=" + codigo + ", quantidade=" + quantidade + ", dtPedido=";
     }
 
     
