@@ -83,18 +83,18 @@ public class GuiEntrada extends JPanel{
         btRemover = new JButton("Remover");
         btConcluir = new JButton("Concluir");
         
-        lbCod.setBounds(20, 10, 100, 25);
-        lbDataBus.setBounds(220, 10, 120, 25);
+        lbCod.setBounds(20, 50, 100, 25);
+        lbDataBus.setBounds(20, 10, 120, 25);
         lbProd.setBounds(20, 50, 100, 25);
-        lbQtd.setBounds(230, 10, 100, 25);
+        lbQtd.setBounds(20, 10, 100, 25);
         lbDtEnt.setBounds(20, 90, 100, 25);
         lbdtVal.setBounds(20, 130, 100, 25);
         lbDescricao.setBounds(20, 175, 100, 25);
         
-        tfDataBus.setBounds(360, 10, 100, 25);
-        tfCod.setBounds(150, 10, 50, 25);
+        tfDataBus.setBounds(150, 10, 100, 25);
+        tfCod.setBounds(150, 50, 50, 25);
         tfProd.setBounds(150, 50, 250, 25);
-        tfQtd.setBounds(320, 10, 80, 25);
+        tfQtd.setBounds(150, 10, 80, 25);
         cbCategorias.setBounds(150, 90, 250, 25);
         
         tfDtVal.setBounds(150, 130, 250, 25);
@@ -102,9 +102,9 @@ public class GuiEntrada extends JPanel{
         
         btAdicionar.setBounds(20,210,100,25);
         btRemover.setBounds(130,210,90,25);
-        btConcluir.setBounds(230,210,100,25);
-        btCadastrar.setBounds(400,10,100,25);
-        btBBuscar.setBounds(400, 45, 100, 25);
+        //btConcluir.setBounds(230,210,100,25);
+        btCadastrar.setBounds(230,210,100,25);
+        btBBuscar.setBounds(260, 100, 100, 25);
         
         //Abas
         
@@ -124,7 +124,7 @@ public class GuiEntrada extends JPanel{
         pn1.add(tfDtVal);
         pn1.add(btAdicionar);
         pn1.add(btRemover);
-        pn1.add(btConcluir);
+        //pn1.add(btConcluir);
         pn1.add(tfDescricao);
         pn1.add(lbDescricao);
         pn1.add(btCadastrar);
@@ -156,7 +156,7 @@ public class GuiEntrada extends JPanel{
         //tabela 
         
         pnTabela = new JPanel(new BorderLayout());
-        pnTabela.setBorder(new TitledBorder("Itens do pedido"));
+        pnTabela.setBorder(new TitledBorder("Itens de Entrada"));
         spTabela = new JScrollPane();
         DefaultTableModel tableModel = new DefaultTableModel(
             new String[]{"PRODUTO", "QTD","DTVAL","CAT","DESC"},0){
@@ -170,22 +170,22 @@ public class GuiEntrada extends JPanel{
         
         tbTabela = new JTable(tableModel);
         
-        DefaultTableCellHeaderRenderer alinharDireita = new DefaultTableCellHeaderRenderer();
-        alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
+        DefaultTableCellHeaderRenderer alinharEsquerda = new DefaultTableCellHeaderRenderer();
+        alinharEsquerda.setHorizontalAlignment(SwingConstants.LEFT);
         
-        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(100);
+        tbTabela.getColumnModel().getColumn(0).setPreferredWidth(200);
         tbTabela.getColumnModel().getColumn(0).setResizable(false);
         tbTabela.getColumnModel().getColumn(1).setResizable(false);
-        tbTabela.getColumnModel().getColumn(1).setPreferredWidth(170);
+        tbTabela.getColumnModel().getColumn(1).setPreferredWidth(40);
         tbTabela.getColumnModel().getColumn(2).setResizable(false);
         tbTabela.getColumnModel().getColumn(2).setPreferredWidth(70);
-        tbTabela.getColumnModel().getColumn(2).setCellRenderer(alinharDireita);
+
         tbTabela.getColumnModel().getColumn(3).setResizable(false);
-        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(95);
-        tbTabela.getColumnModel().getColumn(3).setCellRenderer(alinharDireita);
+        tbTabela.getColumnModel().getColumn(3).setPreferredWidth(80);
+       
         tbTabela.getColumnModel().getColumn(4).setResizable(false);
-        tbTabela.getColumnModel().getColumn(4).setPreferredWidth(95);
-        tbTabela.getColumnModel().getColumn(4).setCellRenderer(alinharDireita);
+        tbTabela.getColumnModel().getColumn(4).setPreferredWidth(146);
+      
        
        
         
@@ -194,10 +194,10 @@ public class GuiEntrada extends JPanel{
         
         spTabela.setViewportView(tbTabela);
         pnTabela.add(spTabela);
-        pnTabela.setBounds(15, 290, 550, 250);
+        pnTabela.setBounds(15, 260, 550, 150);
         
         pnTabela1 = new JPanel(new BorderLayout());
-        pnTabela1.setBorder(new TitledBorder("Itens da Entrada"));
+        pnTabela1.setBorder(new TitledBorder("Itens da Busca"));
         spTabela1 = new JScrollPane();
         DefaultTableModel tableModel1 = new DefaultTableModel(
             new String[]{"PRODUTO", "QTD"},0){
@@ -212,12 +212,12 @@ public class GuiEntrada extends JPanel{
         tbTabela1 = new JTable(tableModel1);
         
         DefaultTableCellHeaderRenderer alinharDireita1 = new DefaultTableCellHeaderRenderer();
-        alinharDireita.setHorizontalAlignment(SwingConstants.RIGHT);
+        alinharEsquerda.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabela1.getColumnModel().getColumn(0).setPreferredWidth(100);
+        tbTabela1.getColumnModel().getColumn(0).setPreferredWidth(170);
         tbTabela1.getColumnModel().getColumn(0).setResizable(false);
         tbTabela1.getColumnModel().getColumn(1).setResizable(false);
-        tbTabela1.getColumnModel().getColumn(1).setPreferredWidth(170);
+        tbTabela1.getColumnModel().getColumn(1).setPreferredWidth(120);
         
         tbTabela1.getTableHeader().setReorderingAllowed(false);
         tbTabela1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

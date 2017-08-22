@@ -163,8 +163,8 @@ public class GuiSaida extends JPanel{
         cbBProdutos.setBounds(95, 30, 180, 25);
         //tfBProd.setBounds(90, 30, 200, 25);
         
-        lbBDtSaida.setBounds(290, 30, 90, 25);
-        tfBDtSaida.setBounds(390, 30, 70, 25);
+        lbBDtSaida.setBounds(25, 30, 90, 25);
+        tfBDtSaida.setBounds(105, 30, 70, 25);
         
         
         lbBQtd.setBounds(485, 30, 30, 25);
@@ -177,8 +177,8 @@ public class GuiSaida extends JPanel{
         //pn2 add
         pn2 = new JPanel(getLayout());
         
-        pn2.add(lbBProduto);
-        pn2.add(cbBProdutos);
+//        pn2.add(lbBProduto);
+//        pn2.add(cbBProdutos);
         
         
 //        pn2.add(lbBQtd);
@@ -397,6 +397,10 @@ public class GuiSaida extends JPanel{
             public void actionPerformed(ActionEvent ae) {
                 ArrayList<Saidas> saidas = new ArrayList<Saidas>();
                 //String nomeBuscaPro = (String) cbBProdutos.getSelectedItem();
+                if(tfBDtSaida.getText().equals("") ){
+                    JOptionPane.showMessageDialog(null, "Preencha a Data de Saída");
+                    return;
+                }
                 
                 String dataSaida = tfBDtSaida.getText();
                

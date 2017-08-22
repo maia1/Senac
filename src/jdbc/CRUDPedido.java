@@ -142,7 +142,7 @@ public class CRUDPedido {
     //Aba: Movimentar o estoque
     private void moviEsto(int codEst, int resultado1) {
         try{
-            sql = "UPDATE tb_estoque SET est_qtd = ? WHERE tb_estoques.est_cod = ?;";
+            sql = "UPDATE tb_estoque SET est_qtd = ?, est_arm = 'Nutrição' WHERE tb_estoques.est_cod = ?;";
             st = connection.prepareStatement(sql);
             st.setInt(1, resultado1);
             st.setInt(2, codEst);
@@ -151,6 +151,7 @@ public class CRUDPedido {
             resultado = "ERRO";
             JOptionPane.showMessageDialog(null, "ERRO");
         }
+        
     }
     
     //Aba: buscar Pedido
