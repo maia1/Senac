@@ -1,18 +1,15 @@
 package gui;
 
-import com.sun.istack.internal.logging.Logger;
 import contoller.ControlePedido;
-import excecoes.ProdutoNaoEncontrado;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.logging.Level;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -27,25 +24,26 @@ import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import model.Pedidos;
-import model.Produtos;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 public class GuiPedido extends JPanel{
-    private JLabel lbCod, lbQtd, lbProd;
-    private JTextField tfCod, tfQtd;
+    private JLabel lbCod, lbQtd, lbProd, lbPed,lbDTPed;
+    private JTextField tfCod, tfQtd, tfDTPed;
     private JComboBox cbProd, cbPed;
-    private JButton btAdicionar, btRemover, btRegistrar, btMostrar;
-    private JPanel pnPrincipal, pnTabela, pnTabela1;
-    private JScrollPane spTabela, spTabela1;
-    private JTable tbTabela, tbTabela1;
+    private JButton btAdicionar, btRemover, btRegistrar, btMostrar, btBaixar, btBuscar;
+    private JPanel pnPrincipal, pnTabela, pnTabela1, pnTabela2;
+    private JScrollPane spTabela, spTabela1, spTabela2;
+    private JTable tbTabela, tbTabela1, tbTabela2;
     private ControlePedido contPedidos;
-    private JPanel pn1, pn2;
+    private JPanel pn1, pn2,pn3;
     private JTabbedPane tpAba;
+    private SimpleDateFormat sdf;
     
     public GuiPedido(){
         contPedidos = new ControlePedido();
         inicializarComponentes();
-        definirEventos(); 
+        definirEventos();
+        sdf = new SimpleDateFormat("dd/MM/yyyy");
     }
     
     public void inicializarComponentes(){
@@ -56,10 +54,13 @@ public class GuiPedido extends JPanel{
         lbCod = new JLabel("Código: ");
         lbQtd = new JLabel("Quantidade: ");
         lbProd = new JLabel("Produtos: ");
+        lbPed = new JLabel("Pedidos Solicitados");
+        lbDTPed = new JLabel("Data Pedido");
         
         tfCod = new JTextField();
         tfCod.setEditable(false);
         tfQtd = new JTextField();
+        tfDTPed = new JTextField();
         
         cbProd = new JComboBox(produtos);
         cbPed = new JComboBox(pedidos);
@@ -68,21 +69,28 @@ public class GuiPedido extends JPanel{
         btRemover = new JButton("Remover");
         btRegistrar = new JButton("Registrar");
         btMostrar = new JButton("Mostrar");
+        btBaixar = new JButton("Baixar");
+        btBuscar = new JButton("Buscar");
 
         lbCod.setBounds(20, 10, 100, 25);
         lbQtd.setBounds(220, 10, 100, 25);
         lbProd.setBounds(20, 50, 100, 25);
+        lbPed.setBounds(20, 10, 150, 25);
+        lbDTPed.setBounds(20, 50, 100, 25);
         
         tfCod.setBounds(130, 10, 50, 25);
         tfQtd.setBounds(300, 10, 120, 25);
+        tfDTPed.setBounds(130, 50, 100, 25);
         
         cbProd.setBounds(130, 50, 290, 25);
         cbPed.setBounds(130, 50, 290, 25);
         
-        btMostrar.setBounds(20, 100, 120, 25);
+        btBaixar.setBounds(150, 90, 120, 25);
+        btMostrar.setBounds(20, 90, 120, 25);
         btAdicionar.setBounds(20, 100, 120, 25);
         btRemover.setBounds(160, 100, 120, 25);
         btRegistrar.setBounds(300, 100, 120, 25);
+        btBuscar.setBounds(20, 90, 120, 25);
         
         //Abas
                 
@@ -94,6 +102,7 @@ public class GuiPedido extends JPanel{
         
         pn1 = new JPanel(getLayout()); 
         pn2 = new JPanel(getLayout());
+        pn3 = new JPanel(getLayout());
       
         //Aba: adicionar
 
@@ -110,6 +119,12 @@ public class GuiPedido extends JPanel{
         
         pn2.add(cbPed);
         pn2.add(btMostrar);
+        pn2.add(btBaixar);
+        pn2.add(lbPed);
+        
+        pn3.add(lbDTPed);
+        pn3.add(tfDTPed);
+        pn3.add(btBuscar);
         
         //Aba: criação tabela
        
@@ -119,8 +134,9 @@ public class GuiPedido extends JPanel{
         
         tpAba.setBounds(0, 0, 600, 500);
         
-        tpAba.add("Cadastro", pn1);
-        tpAba.add("Buscar", pn2);
+        tpAba.add("Solicitar", pn1);
+        tpAba.add("Verificar", pn2);
+        tpAba.add("Buscar",pn3);
         
         //tabela cadastro
         pnTabela = new JPanel(new BorderLayout());
@@ -182,12 +198,11 @@ public class GuiPedido extends JPanel{
         DefaultTableCellHeaderRenderer alinhaDireita1 = new DefaultTableCellHeaderRenderer();
         alinhaDireita1.setHorizontalAlignment(SwingConstants.RIGHT);
         
-        tbTabela1.getColumnModel().getColumn(0).setPreferredWidth(156);
+        tbTabela1.getColumnModel().getColumn(0).setPreferredWidth(190);
         tbTabela1.getColumnModel().getColumn(0).setResizable(false);
         tbTabela1.getColumnModel().getColumn(1).setResizable(false);
-        tbTabela1.getColumnModel().getColumn(1).setPreferredWidth(100);
+        tbTabela1.getColumnModel().getColumn(1).setPreferredWidth(90);
         tbTabela1.getColumnModel().getColumn(1).setCellRenderer(alinhaDireita);
-
         
         tbTabela1.getTableHeader().setReorderingAllowed(false);
         tbTabela1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -195,11 +210,46 @@ public class GuiPedido extends JPanel{
         spTabela1.setViewportView(tbTabela1);
         pnTabela1.add(spTabela1);
         pnTabela1.setBounds(150, 120, 300, 300);
+        
+        //Pn Tabela 2
+        
+        pnTabela2 = new JPanel(new BorderLayout());
+        pnTabela2.setBorder(new TitledBorder("Itens do pedido:"));
+        spTabela2 = new JScrollPane();
+        
+        DefaultTableModel tableModel2 = new DefaultTableModel(
+                new String[]{"Produto","Quantidade"},0){
+                    public boolean isCellEditable1(int row, int col){
+                        if(col == 1){
+                            return false;
+                        }
+                        return true;
+                    }
+        };
+        
+        tbTabela2 = new JTable(tableModel2);
+        
+        DefaultTableCellHeaderRenderer alinhaDireita2 = new DefaultTableCellHeaderRenderer();
+        alinhaDireita2.setHorizontalAlignment(SwingConstants.RIGHT);
+        
+        tbTabela2.getColumnModel().getColumn(0).setPreferredWidth(190);
+        tbTabela2.getColumnModel().getColumn(0).setResizable(false);
+        tbTabela2.getColumnModel().getColumn(1).setResizable(false);
+        tbTabela2.getColumnModel().getColumn(1).setPreferredWidth(90);
+        tbTabela2.getColumnModel().getColumn(1).setCellRenderer(alinhaDireita);
+        
+        tbTabela2.getTableHeader().setReorderingAllowed(false);
+        tbTabela2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        
+        spTabela2.setViewportView(tbTabela2);
+        pnTabela2.add(spTabela2);
+        pnTabela2.setBounds(150, 120, 300, 300);
        
         //add
        
         pn1.add(pnTabela);
         pn2.add(pnTabela1);
+        pn3.add(pnTabela2);
         
         
         pnPrincipal.add(tpAba);
@@ -306,8 +356,87 @@ public class GuiPedido extends JPanel{
                     });
                 }
             }
-        
         });
+//        
+//        btBaixar.addActionListener(new ActionListener() {
+//
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                int codPedido  = Integer.parseInt((String)cbPed.getSelectedItem());
+//                contPedidos.darBaixaPedido(codPedido);
+//                limparTudo();
+//            }
+//        });
+        
+        btBaixar.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //ArrayList<ItemPedido> itensPedido = new ArrayList<ItemPedido>();
+                //ItemPedido item;
+                //int[] linhas = tbTabela1.getSelectedRows();
+                
+                //DefaultTableModel dtm = (DefaultTableModel) tbTabela1.getModel();
+                /*for(int linha = 0; linha < tbTabela1.getRowCount(); linha++){
+                    item = new ItensPedidos();
+                    item.setNome(""+tbTabela1.getValueAt(linha, 0));
+                    item.setQtd((int) tbTabela1.getValueAt(linha, 1));
+                    itensPedido.add(item);
+                }*/
+                int codPedido = Integer.parseInt((String) cbPed.getSelectedItem());
+                contPedidos.darBaixaPedido(codPedido);
+                cbPed.removeAllItems();
+            }
+        });
+        
+        btBuscar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                limparTudo();
+                ArrayList<Pedidos> pedidos = new ArrayList<Pedidos>();
+                
+                String dataPedido = ""+tfDTPed.getText();
+                
+                Date data = null;
+                
+                
+                try {
+                    data = sdf.parse(dataPedido);
+                } catch (ParseException ex) {
+                    java.util.logging.Logger.getLogger(GuiPedido.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                
+                 pedidos = contPedidos.buscarPedidosProdutos(data);
+                 
+                 for(Pedidos pedido : pedidos){
+                     DefaultTableModel dtm = (DefaultTableModel)tbTabela2.getModel();
+                     dtm.addRow(new Object[]{
+                         pedido.getNomePro(),
+                         pedido.getQuantidade(),
+                         dataPedido
+                     });
+                     
+                 }
+            }
+
+            
+        });
+    }
+    
+    private void limparTudo(){
+  
+        int linhas = tbTabela2.getRowCount();
+        //JOptionPane.showMessageDialog(null, "Limpar Tabelas");
+        DefaultTableModel dtm = (DefaultTableModel) tbTabela2.getModel();
+        for(int i = 0; linhas>0; linhas--){
+            dtm.removeRow(i);
+                }
+        int linhasB = tbTabela2.getRowCount();
+        
+        DefaultTableModel dtmB = (DefaultTableModel) tbTabela2.getModel();
+        for(int i = 0; linhasB>0; linhasB--){
+            dtmB.removeRow(i);
+                }
     }
     
     private void limpar(){
@@ -320,7 +449,7 @@ public class GuiPedido extends JPanel{
         Calendar c = Calendar.getInstance();
         return c.getTime();
     }
-    
+   
     private String[] listarProdutos(){
         String[] prod = contPedidos.listarProdutos();
         return prod;

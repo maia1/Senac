@@ -26,22 +26,22 @@ import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import model.Categorias;
 import model.Entradas;
-import model.Pedidos;
 import model.Produtos;
+import model.Saidas;
 import sun.swing.table.DefaultTableCellHeaderRenderer;
 
 public class GuiEntrada extends JPanel{
  
     private JLabel lbCod, lbProd, lbQtd, lbDtEnt, lbdtVal,lbDescricao, lbDataBus;
     private JTextField tfCod, tfProd, tfQtd, tfDtVal, tfDescricao, tfDataBus;
-    private JComboBox cbCategorias, cbBcodEnt;
-    private JButton btAdicionar, btRemover, btConcluir, btCadastrar, btBBuscar, btBMostrar;
-    private JPanel pnPrincipal, pnTabela, pnTabela1;
-    private JScrollPane spTabela, spTabela1;
-    private JTable tbTabela, tbTabela1;
+    private JComboBox cbCategorias, cbBcodEnt, cbEntEdi;
+    private JButton btAdicionar, btRemover, btConcluir, btCadastrar, btBBuscar, btBMostrar, btEMostrar;
+    private JPanel pnPrincipal, pnTabela, pnTabela1, pnTabela2;
+    private JScrollPane spTabela, spTabela1, spTabela2;
+    private JTable tbTabela, tbTabela1, tbTabela2;
     private SimpleDateFormat sdf;
     private ControleEntrada contEntrada;
-    private JPanel pn1, pn2;
+    private JPanel pn1, pn2, pn3;
     private JTabbedPane tpAba;
     
     public GuiEntrada(){
@@ -49,21 +49,24 @@ public class GuiEntrada extends JPanel{
         inicializarComponentes();
         definirEventos();
         sdf = new SimpleDateFormat("dd/MM/yyyy");
+        listarEstoque();
     }
     
     public void inicializarComponentes(){
         setLayout(null);
         String[] categorias = listarCategorias();
+        String[] entradas =   entDoDia();
         //Restante
         
-        lbCod = new JLabel("Codigo");
+        //lbCod = new JLabel("Codigo");
         lbProd = new JLabel("Produto");
         lbQtd = new JLabel("Quantidade");
         lbDtEnt = new JLabel("Categorias");
         lbdtVal = new JLabel("Data de Val.");
         lbDataBus = new JLabel("Data da Entrada");
         lbDescricao = new JLabel("Descrição");       
-        tfCod = new JTextField();
+        cbEntEdi = new JComboBox(entradas);
+        //tfCod = new JTextField();
         tfProd = new JTextField();
         tfQtd = new JTextField();
         cbCategorias = new JComboBox(categorias);
@@ -82,8 +85,9 @@ public class GuiEntrada extends JPanel{
         btAdicionar = new JButton("Adicionar");
         btRemover = new JButton("Remover");
         btConcluir = new JButton("Concluir");
+        btEMostrar = new JButton("Mostrar");
         
-        lbCod.setBounds(20, 50, 100, 25);
+//        lbCod.setBounds(20, 50, 100, 25);
         lbDataBus.setBounds(20, 10, 120, 25);
         lbProd.setBounds(20, 50, 100, 25);
         lbQtd.setBounds(20, 10, 100, 25);
@@ -91,12 +95,14 @@ public class GuiEntrada extends JPanel{
         lbdtVal.setBounds(20, 130, 100, 25);
         lbDescricao.setBounds(20, 175, 100, 25);
         
+        
         tfDataBus.setBounds(150, 10, 100, 25);
-        tfCod.setBounds(150, 50, 50, 25);
+  //      tfCod.setBounds(150, 50, 50, 25);
         tfProd.setBounds(150, 50, 250, 25);
         tfQtd.setBounds(150, 10, 80, 25);
         cbCategorias.setBounds(150, 90, 250, 25);
-        
+        cbEntEdi.setBounds(200, 20, 80, 25);
+       
         tfDtVal.setBounds(150, 130, 250, 25);
         tfDescricao.setBounds(150, 175, 250, 25);
         
@@ -105,11 +111,13 @@ public class GuiEntrada extends JPanel{
         //btConcluir.setBounds(230,210,100,25);
         btCadastrar.setBounds(230,210,100,25);
         btBBuscar.setBounds(260, 100, 100, 25);
+        btEMostrar.setBounds(180, 55, 100, 25);
         
         //Abas
         
         pn1 = new JPanel(getLayout()); 
         pn2 = new JPanel(getLayout());
+        pn3 = new JPanel(getLayout());
        
             
         //pn1 add
@@ -130,13 +138,18 @@ public class GuiEntrada extends JPanel{
         pn1.add(btCadastrar);
         
         //pn2 add
-        pn2.add(lbCod);
-        pn2.add(tfCod);
+        //pn2.add(lbCod);
+        //pn2.add(tfCod);
         pn2.add(lbDataBus);
         pn2.add(tfDataBus);
         pn2.add(btBBuscar);
         pn2.add(btBMostrar);
         pn2.add(cbBcodEnt);
+        
+        //pn3 add
+        
+        //pn3.add(cbEntEdi);
+        //pn3.add(btEMostrar);
             
         //Abas
             
@@ -146,6 +159,7 @@ public class GuiEntrada extends JPanel{
           
         tpAba.add("Cadastro", pn1);
         tpAba.add("Buscar", pn2);
+        tpAba.add("Listar Estoque", pn3);
          
         
         pnPrincipal = new JPanel();
@@ -196,6 +210,7 @@ public class GuiEntrada extends JPanel{
         pnTabela.add(spTabela);
         pnTabela.setBounds(15, 260, 550, 150);
         
+        // tabela de busca
         pnTabela1 = new JPanel(new BorderLayout());
         pnTabela1.setBorder(new TitledBorder("Itens da Busca"));
         spTabela1 = new JScrollPane();
@@ -226,9 +241,45 @@ public class GuiEntrada extends JPanel{
         pnTabela1.add(spTabela1);
         pnTabela1.setBounds( 100, 150,300, 250);
         
+        //tabela edição
+        
+        pnTabela2 = new JPanel(new BorderLayout());
+        pnTabela2.setBorder(new TitledBorder("Estoque Produtos"));
+        spTabela2 = new JScrollPane();
+        DefaultTableModel tableModel2 = new DefaultTableModel(
+            new String[]{"PRODUTO", "QTD","DTVAL", "Estoque"},0){
+                public boolean iscellEditable(int row, int col){
+                    if(col == 3){
+                        return false;
+                    }
+                    return true;
+                }
+            };
+        
+        tbTabela2 = new JTable(tableModel2);
+        
+        DefaultTableCellHeaderRenderer alinharEsquerda2 = new DefaultTableCellHeaderRenderer();
+        alinharEsquerda2.setHorizontalAlignment(SwingConstants.LEFT);
+        
+        tbTabela2.getColumnModel().getColumn(0).setPreferredWidth(200);
+        tbTabela2.getColumnModel().getColumn(0).setResizable(false);
+        tbTabela2.getColumnModel().getColumn(1).setResizable(false);
+        tbTabela2.getColumnModel().getColumn(1).setPreferredWidth(40);
+        tbTabela2.getColumnModel().getColumn(2).setResizable(false);
+        tbTabela2.getColumnModel().getColumn(2).setPreferredWidth(75);
+        tbTabela2.getColumnModel().getColumn(3).setResizable(false);
+        tbTabela2.getColumnModel().getColumn(3).setPreferredWidth(75);
+       
+        tbTabela2.getTableHeader().setReorderingAllowed(false);
+        tbTabela2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        
+        spTabela2.setViewportView(tbTabela2);
+        pnTabela2.add(spTabela2);
+        pnTabela2.setBounds(15, 120, 358, 200);
         
         pn1.add(pnTabela);
         pn2.add(pnTabela1);
+        pn3.add(pnTabela2);
         
         pnPrincipal.add(tpAba);
       
@@ -242,6 +293,30 @@ public class GuiEntrada extends JPanel{
 	return calendar.getTime();
     }
     
+    public String[] entDoDia(){
+        Date data = getPegaDataAtual();
+        String[] entradas = contEntrada.entDoDia(data);
+        return entradas;
+    }
+    
+    
+  
+    public void listarEstoque(){
+        ArrayList<Saidas> saidas = new ArrayList<Saidas>();
+        
+                saidas = contEntrada.listarEstoque();
+           
+                for(Saidas saida : saidas){
+                    
+                    DefaultTableModel dtm1 = (DefaultTableModel)tbTabela2.getModel();
+                    dtm1.addRow(new Object[]{
+                        saida.getNomePro(),
+                        saida.getQuantidadeSai(),
+                        sdf.format(saida.getDataVal())
+                        
+                    });
+                }
+    }
     public void definirEventos(){
         
         btAdicionar.addActionListener(new ActionListener() {
@@ -346,10 +421,10 @@ public class GuiEntrada extends JPanel{
         btBBuscar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent ae) {
+                cbBcodEnt.removeAllItems();
                 ArrayList<String> codigos = new ArrayList<String>();
-                if(tfCod.getText().equals("")){
                     if(tfDataBus.getText().equals("")){
-                        JOptionPane.showMessageDialog(null, "Informe Código ou Data");
+                        JOptionPane.showMessageDialog(null, "Informe Data");
                     }else{
                         Date data = null;
                         String dataBus = tfDataBus.getText();
@@ -363,8 +438,6 @@ public class GuiEntrada extends JPanel{
                         for(String cod : codigos){
                            cbBcodEnt.addItem(cod);
                         }
-
-                    }
                 }
             }   
         });
@@ -393,6 +466,39 @@ public class GuiEntrada extends JPanel{
             }
         
         });
+        
+        btEMostrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                limparTudo();
+                ArrayList<Entradas> entradas = new ArrayList<Entradas>();
+     
+                int codBus = Integer.parseInt(""+cbEntEdi.getSelectedItem());
+               
+                Produtos produto = new Produtos();
+                Categorias categoria = new Categorias();
+                
+                entradas = contEntrada.buscarProdutosEdi(codBus);
+                
+                
+                for(Entradas entrada : entradas){
+                    
+                    produto = entrada.getProduto();
+                    categoria = produto.getCategoria();
+                   
+                    DefaultTableModel dtm2 = (DefaultTableModel)tbTabela2.getModel();
+                    dtm2.addRow(new Object[]{
+                    
+                    produto.getNome(),
+                    entrada.getQuantidade(),
+                    entrada.getDataVal(),
+                    categoria.getCategoria(),
+                    produto.getDescricao()
+                    });
+                }
+            }
+        
+        });
       
     }
         
@@ -401,21 +507,23 @@ public class GuiEntrada extends JPanel{
         return categor;        
     }
         private void limpar(){
-           tfCod.setText("");
+           
            tfDtVal.setText("");
            cbCategorias.setSelectedIndex(0);
            tfProd.setText("");
            tfQtd.setText("");
+           tfDescricao.setText("");
         }
 
         private void limparTudo(){
-           tfCod.setText("");
+           
            tfDtVal.setText("");
            cbCategorias.setSelectedIndex(0);
            tfProd.setText("");
            tfQtd.setText("");
+           tfDescricao.setText("");
         int linhas = tbTabela.getRowCount();
-        JOptionPane.showMessageDialog(null, "Limpar Tabelas");
+        //JOptionPane.showMessageDialog(null, "Limpar Tabelas");
         DefaultTableModel dtm = (DefaultTableModel) tbTabela.getModel();
         for(int i = 0; linhas>0; linhas--){
             dtm.removeRow(i);

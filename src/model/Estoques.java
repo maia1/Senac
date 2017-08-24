@@ -12,7 +12,7 @@ import java.util.Date;
 
 public class Estoques {
     private SimpleDateFormat sdf;
-    private int codigo, quantidade;
+    private int codigo, quantidade, QuantidadeAtual;
     private Date dataValidade;
     private String armazem;
     
@@ -59,6 +59,14 @@ public Estoques(){
 
     public void setArmazem(String armazem) {
         this.armazem = armazem;
+    }
+
+    public int getQuantidadeAtual() {
+        return QuantidadeAtual;
+    }
+
+    public void setQuantidadeAtual(int QuantidadeAtual) {
+        this.QuantidadeAtual = QuantidadeAtual;
     }
 
     @Override

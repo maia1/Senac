@@ -17,7 +17,7 @@ import model.Saidas;
 public class GuiMenuPrincipal extends JFrame{
     private JMenuBar mnBarra;
     private JMenu mnArquivo, mnEstoque;
-    private JMenuItem mtSair, mtEntrada, mtPedido, mtSaida;
+    private JMenuItem mtSair, mtEntrada, mtPedido, mtSaida, mtCategoria;
     private Container container;
 
     public GuiMenuPrincipal() {
@@ -38,10 +38,12 @@ public class GuiMenuPrincipal extends JFrame{
         mtSair = new JMenuItem("Sair");
         mtEntrada = new JMenuItem("Entrada");
         mtSaida = new JMenuItem("Saída");
+        mtCategoria = new JMenuItem("Categoria");
         
         mnBarra.add(mnArquivo);
         mnBarra.add(mnEstoque);
         mnArquivo.add(mtSair);
+        mnEstoque.add(mtCategoria);
         mnEstoque.add(mtEntrada);
         mnEstoque.add(mtPedido);
         mnEstoque.add(mtSaida);
@@ -75,6 +77,16 @@ public class GuiMenuPrincipal extends JFrame{
                 GuiEntrada entrada = new GuiEntrada();
                 container.removeAll();
                 container.add(entrada);
+                container.validate();
+            }
+        });
+        
+        mtCategoria.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                GuiCategoria cat = new GuiCategoria();
+                container.removeAll();
+                container.add(cat);
                 container.validate();
             }
         });

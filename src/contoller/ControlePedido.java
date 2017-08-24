@@ -1,7 +1,5 @@
 package contoller;
 
-import excecoes.ProdutoNaoEncontrado;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import jdbc.CRUDPedido;
@@ -14,14 +12,12 @@ public class ControlePedido {
         crudPedido = new CRUDPedido();
     }
     
-    public void cadastrar(ArrayList<Pedidos> pedido){
-        crudPedido.cadastrar(pedido);
+    public void cadastrar(ArrayList<Pedidos> pedidos){
+        crudPedido.cadastrar(pedidos);
     }
     
-    public Pedidos buscar(String nome ){
+    public Pedidos buscar(String nome){
         Pedidos ped = new Pedidos();
-        
-        ped = crudPedido.buscar(nome);
         return ped;
     }
     
@@ -30,8 +26,8 @@ public class ControlePedido {
     }
 
     public String[] listarProdutos() {
-        ArrayList<String> produtos = crudPedido.listarProdutos();
         
+        ArrayList<String> produtos = crudPedido.listarProdutos();
         String[] prod = new String[produtos.size()+1];
         int i = 0;
         prod[0] = "";
@@ -48,7 +44,6 @@ public class ControlePedido {
     
     public String[] listarPedidos() {
         ArrayList<String> pedidos = crudPedido.codigosPedidos();
-        
         String[] ped = new String[pedidos.size()+1];
         int i = 0;
         ped[0] = "";
@@ -62,5 +57,21 @@ public class ControlePedido {
         ArrayList<Pedidos> pedidos = new ArrayList<Pedidos>();
         pedidos = crudPedido.buscarProdutosCod(cod);
         return pedidos;
+    }
+
+    //public void darBaixaPedido(ArrayList<ItemPedido> itensPedido) {
+    public void darBaixaPedido(int codPedido) {
+        //for(ItensPedidos item: itensPedido){
+            crudPedido.darBaixa(codPedido);
+        //}
+    }
+
+    public ArrayList<Pedidos> buscarPedidosProdutos(Date data) {
+        ArrayList<Pedidos> pedidoEst = new ArrayList<Pedidos>();
+        
+        java.sql.Date dataPedidoSQL = new java.sql.Date(data.getTime());
+        
+        pedidoEst = crudPedido.buscar(dataPedidoSQL);
+        return pedidoEst;
     }
 }

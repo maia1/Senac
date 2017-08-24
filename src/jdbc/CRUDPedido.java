@@ -1,15 +1,15 @@
 package jdbc;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
-import jdbc.Conectar;
+import model.Estoques;
 import model.Pedidos;
-import model.Produtos;
 
 public class CRUDPedido {
     private Conectar conectar;
@@ -34,13 +34,8 @@ public class CRUDPedido {
         for(Pedidos pedido: pedidos){
             java.util.Date data = pedido.getDtPedido();
             java.sql.Date dataSQL = new java.sql.Date(data.getTime());
-            
-            
-            JOptionPane.showMessageDialog(null, dataSQL);
-           
-            int codEst = 0;
-            int qtdEst = 30;
-            
+
+
             //Aba: Inserir data pedido
             if(contador == 0){
                 try{
@@ -54,45 +49,24 @@ public class CRUDPedido {
                 }
                 contador = contador + 1;
             }
-//            int resultado1 = 0;
-//                if(pedido.getQuantidade() > qtdEst){
-//                    JOptionPane.showMessageDialog(null, "Quantidado insuficiente");
-//                }else{
-                    
-                    //resultado1 = qtdEst - pedido.getQuantidade();
-                    //moviEsto(codEst,resultado1);
-                    
+
                     //Aba: buscar
                     int codProd = codPro(pedido.getNomePro());
                     int pedQTD = pedido.getQuantidade();
                     int codPedido = codPed();
                     
-                    //Aba: Inserir o iten pedido
+                    //Aba: Inserir o item pedido
 
                     try{
                         sql2 = "INSERT INTO tb_it_ped (it_ped_qtd, it_ped_pro_cod, it_ped_ped_cod) VALUES (?,?,?)";
                         st = connection.prepareStatement(sql2);
-                        JOptionPane.showMessageDialog(null, pedQTD);
                         st.setInt(1, pedQTD);
                         st.setInt(2, codProd);
                         st.setInt(3, codPedido);
                         st.executeUpdate();
                     }catch(SQLException e){
                         JOptionPane.showMessageDialog(null, "Erro nos itens do pedido");
-                    }
-                    
-//                    if(resultado1 == 0){
-//                        try{
-//                            sql3 = "DELETE FROM tb_estoque WHERE tb_estoques.est_cod = ?";
-//                            st = connection.prepareStatement(sql3);
-//                            st.setInt(1, codEst);
-//                            st.executeUpdate();
-//                        }catch(SQLException e){
-//                            JOptionPane.showMessageDialog(null, "Erro no itens do pedido");
-//                        }
-//                    }
- 
-                //}
+                    }  
         }
     }
     
@@ -101,13 +75,14 @@ public class CRUDPedido {
         produtos.clear();
         String produto = "";
         try{
-            sql = "SELECT tb_produtos.pro_nome FROM tb_produtos\n" +
-"                   INNER JOIN\n" +
-"                   tb_estoques\n" +
-"                   on\n" +
-"                   tb_produtos.pro_cod = tb_estoques.est_pro_cod\n" +
-"                   WHERE\n" +
-"                   tb_estoques.est_arm = 'Geral'";
+            sql = "SELECT " +
+                  "tb_produtos.pro_nome FROM tb_produtos " +
+                  "INNER JOIN " +
+                  "tb_estoques " +
+                  "on " +
+                  "tb_produtos.pro_cod = tb_estoques.est_pro_cod " +
+                  "WHERE " +
+                  "tb_estoques.est_arm = 'Geral'";
             st = connection.prepareStatement(sql);
             result = st.executeQuery();
             while(result.next()){
@@ -140,9 +115,10 @@ public class CRUDPedido {
     }
     
     //Aba: Movimentar o estoque
-    private void moviEsto(int codEst, int resultado1) {
+    
+    private void moviEsto(int codEst, int resultado1) {        
         try{
-            sql = "UPDATE tb_estoque SET est_qtd = ?, est_arm = 'Nutrição' WHERE tb_estoques.est_cod = ?;";
+            sql = "UPDATE tb_estoques SET est_qtd = ? WHERE tb_estoques.est_cod = ?;";
             st = connection.prepareStatement(sql);
             st.setInt(1, resultado1);
             st.setInt(2, codEst);
@@ -151,14 +127,43 @@ public class CRUDPedido {
             resultado = "ERRO";
             JOptionPane.showMessageDialog(null, "ERRO");
         }
-        
     }
     
     //Aba: buscar Pedido
-    public Pedidos buscar(String nome){
-        Pedidos ped = new Pedidos();
-        return ped;
+    
+     public ArrayList<Pedidos> buscar(Date dataPedidoSQL){
+        ArrayList<Pedidos> ped = new ArrayList<Pedidos>();
+       
+        try{
+            sql = "select tb_produtos.pro_nome,\n" +
+                    "       tb_it_ped.it_ped_qtd,\n" +
+                    "       tb_pedidos.ped_dt_pedido,\n" +
+                    "       tb_pedidos.ped_atendido\n" +
+                    "from   tb_pedidos\n" +
+                    "inner join tb_it_ped\n" +
+                    "on tb_pedidos.ped_cod = tb_it_ped.it_ped_ped_cod\n" +
+                    "inner join tb_produtos\n" +
+                    "on tb_it_ped.it_ped_pro_cod = tb_produtos.pro_cod\n" +
+                    "where tb_pedidos.ped_dt_pedido = ?\n" +
+                    "and tb_pedidos.ped_atendido = 2";
+            st = connection.prepareStatement(sql);
+            st.setDate(1, dataPedidoSQL);
+            result = st.executeQuery();
+            
+            while(result.next()){
+                Pedidos pedido = new Pedidos();
+                pedido.setNomePro(result.getString(1));
+                pedido.setQuantidade(result.getInt(2));
+                ped.add(pedido);
+            }
+            
+            return ped;
+        }catch(SQLException e){
+            resultado = "Erro na Busca do pedido";
+            return null;
+        }
     }
+    
     
     public void excluir(String nome){}
     
@@ -221,6 +226,101 @@ public class CRUDPedido {
                     pedidos.add(pedido);
                 }
                 return pedidos;
+            }catch(SQLException se){
+                resultado = "Erro!";
+                return null;
+        }
+    }
+
+    public void darBaixa(int codPedido) {
+        ArrayList<Estoques> itens = pegarItens(codPedido);
+        for(Estoques est: itens){
+            alterarEstoqueGeral(est);
+            addEstoqueNutricao(est);
+            MovPed(codPedido);
+            JOptionPane.showMessageDialog(null, "Pedido baixado com sucesso");
+        }
+    }
+    
+    private void MovPed(int codPedido){
+        try{
+            sql = "UPDATE tb_pedidos SET ped_atendido = 2 WHERE tb_pedidos.ped_cod = ?";
+            st = connection.prepareStatement(sql);
+            st.setInt(1, codPedido);
+            st.executeUpdate();
+        }catch(SQLException e){
+            resultado = "ERRO";
+        }
+    }
+
+    private void alterarEstoqueGeral(Estoques est) {
+        int novaQtd = est.getQuantidadeAtual()-est.getQuantidade();
+        try{
+            sql = "UPDATE tb_estoques SET tb_estoques.est_qtd = ? WHERE tb_estoques.est_pro_cod = ?;";
+            st = connection.prepareStatement(sql);
+            st.setInt(1, novaQtd);
+            st.setInt(2, est.getCodigo());
+            st.executeUpdate();
+        }catch(SQLException e){
+            resultado = "ERRO";
+        }
+    }
+    
+    
+    private void addEstoqueNutricao(Estoques est) {
+        try{
+            sql2 = "INSERT INTO tb_estoques (est_qtd, est_dt_val, est_arm, est_pro_cod) VALUES (?,?,?,?);";
+            st = connection.prepareStatement(sql2);
+            st.setInt(1, est.getQuantidade());
+            java.sql.Date data = (java.sql.Date) est.getDataValidade();
+            st.setDate(2, data);
+            st.setString(3, est.getArmazem());
+            st.setInt(4, est.getCodigo());
+            st.executeUpdate();
+        }catch(SQLException e){
+            resultado = "ERRO";
+        }
+    }
+
+    private ArrayList<Estoques> pegarItens(int codPedido) {
+        ArrayList<Estoques> estoques = new ArrayList<Estoques>();
+            try{
+                sql = "select " +
+                      "	tb_it_ped.it_ped_qtd as qtd, " +
+                      "	tb_estoques.est_dt_val as dtValidade, " +
+                      "	tb_produtos.pro_cod as codProduto, " +
+                      "	max(tb_estoques.est_cod), " +  
+                      "     tb_estoques.est_qtd as qtd " +
+                      "From " +
+                      "	tb_pedidos " +
+                      "inner join " +
+                      "	tb_it_ped " +
+                      "on " +
+                      "	tb_it_ped.it_ped_ped_cod = tb_pedidos.ped_cod " +
+                      "inner join " +
+                      "	tb_produtos " +
+                      "on " +
+                      "	tb_produtos.pro_cod = tb_it_ped.it_ped_pro_cod " +
+                      "inner join " +
+                      "	tb_estoques " +
+                      "on " +
+                      "	tb_produtos.pro_cod = tb_estoques.est_pro_cod " +
+                     "where " +
+                     "	tb_pedidos.ped_cod = ?;";
+                st = connection.prepareStatement(sql);
+                st.setInt(1, codPedido);
+                result = st.executeQuery();
+               
+                while(result.next()){
+                    Estoques est = new Estoques();
+                    est.setQuantidade(result.getInt(1));
+                    est.setDataValidade(result.getDate(2));
+                    est.setCodigo(result.getInt(3));
+                    est.setQuantidadeAtual(result.getInt(4));
+                    est.setArmazem("Nutrição");
+                    estoques.add(est);
+                }
+                return estoques;
             }catch(SQLException se){
                 resultado = "Erro!";
                 return null;

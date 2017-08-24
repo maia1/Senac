@@ -7,7 +7,6 @@ package model;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import model.ItensPedidos;
 
 public class Pedidos extends ItensPedidos{
     private int codigo, quantidade;

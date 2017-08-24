@@ -19,7 +19,7 @@ public class Conectar {
     
     private Connection connection = null;
     private final String driver = "com.mysql.jdbc.Driver";
-    private final String dbName = "db_estoque3";
+    private final String dbName = "db_estoque";
     private final String url = "jdbc:mysql://127.0.0.1:3306/"+dbName;
     private final String usuario = "root";
     private final String senha = "";

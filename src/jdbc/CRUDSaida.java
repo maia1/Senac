@@ -149,9 +149,7 @@ public class CRUDSaida {
 "                    ORDER BY tb_estoques.est_dt_val ASC;";
             
             st = connection.prepareStatement(sql);
-            //st.setInt(1, 2);
-
-            
+                      
             result = st.executeQuery();
             while(result.next()){
                 produtos.add(result.getString(2));//Refere-se à segunda coluna buscada pelo sql 
